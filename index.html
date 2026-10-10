@@ -3,107 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Central Radar BLOKinho - Fusão Avançada</title>
-  <!-- SDK Oficial do Telegram Mini Apps -->
-  <script src="https://telegram.org"></script>
-  
+  <title>Miniloja Relâmpago - Conteúdo & Ofertas</title>
   <style>
     *,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb;--tw-translate-x:0;--tw-translate-y:0;--tw-scale-x:1;--tw-scale-y:1}
     body{background-color:#09090b;color:#f4f4f5;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;padding:16px;min-height:100vh}
     .container{width:100%;max-width:480px;margin-left:auto;margin-right:auto}
     .status-badge{display:inline-block;font-size:10px;font-weight:bold;letter-spacing:2px;color:#10b981;background:rgba(16,185,129,.1);padding:4px 10px;border-radius:20px;margin-bottom:8px}
     
-    /* Sistema de Abas por Mouse */
-    .tabs-nav{display:flex;gap:8px;margin-bottom:20px}
-    .tab-btn{flex:1;background-color:#141417;color:#71717a;border:1px solid rgba(255,255,255,.05);padding:12px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:12px;text-align:center;transition:all .2s}
-    .tab-btn.active{background-color:#27272a;color:#f4f4f5;border-color:#4b5563}
-    .tab-content{display:none}
-    .tab-content.active{display:block}
-
+    /* Menu de Categorias Dinâmicas */
+    .menu-filtros{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+    .filtro-btn{flex:1;min-width:90px;background-color:#141417;color:#71717a;border:1px solid rgba(255,255,255,.05);padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;text-align:center;transition:all .2s}
+    .filtro-btn.active{background-color:#27272a;color:#4ade80;border-color:#4ade80}
+    
+    /* Blocos de Dicas e Conteúdo */
+    .card-dica{background:linear-gradient(135deg, #1e1b4b 0%, #09090b 100%);border:1px solid rgba(124,58,237,0.2);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 10px 15px -3px rgba(0,0,0,0.3)}
+    
     /* Cards de Produto Estilo Premium */
     .product-card{background:#141417;border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:12px;transition:transform 0.2s}
-    .product-card:hover{transform:scale(1.02)}
     .badge-off{background:rgba(16,185,129,.1);color:#10b981;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px}
-    
-    /* Player de Vídeo Proporção 9:16 MônicaIA */
-    .preview-916{width:180px;height:320px;background-color:#000;border:2px dashed #7c3aed;border-radius:12px;margin:20px auto;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
-    .progress-bar-container{width:80%;background-color:#27272a;height:6px;border-radius:3px;margin-top:10px;display:none}
-    .progress-bar-fill{width:0%;height:100%;background-color:#7c3aed;border-radius:3px;transition:width 0.1s linear}
+    .btn-zap{width:100%;background-color:#10b981;color:white;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-transform:uppercase}
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- Cabeçalho Unificado -->
-    <header style="text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.05);">
-      <span class="status-badge">● AO VIVO • PAINEL OPERACIONAL</span>
-      <h1 style="font-size: 21px; font-weight: 900; color: #4ade80;" id="lblNomeLoja">RADAR BLOKINHO COOPERATIVO</h1>
+    <!-- Cabeçalho Principal -->
+    <header style="text-align: center; margin-bottom: 15px;">
+      <span class="status-badge">● CONTEÚDO DIÁRIO • VITRINE AO VIVO</span>
+      <h1 style="font-size: 22px; font-weight: 900; color: #4ade80;" id="lblNomeLoja">MINILOJA RELÂMPAGO</h1>
     </header>
 
-    <!-- Menu de Abas Alternáveis -->
-    <div style="font-size: 11px; color: #71717a; text-align: center;">© 2026 aLojinha • Ofertas atualizadas automaticamente a cada 30 min.</div>
-      <button class="tab-btn active" id="btn-vitrine" onclick="mudarAba('vitrine')">🛍️ Miniloja</button>
-      <button class="tab-btn" id="btn-monica" onclick="mudarAba('monica')">🎬 MônicaIA</button>
-      <button class="tab-btn" id="btn-radar" onclick="mudarAba('radar')">📡 Radar Admin</button>
+    <!-- Espaço de Navegação das Categorias Dinâmicas -->
+    <nav class="menu-filtros">
+      <button class="filtro-btn active" id="f-todos" onclick="filtrarCategoria('todos')">🌐 Tudo</button>
+      <button class="filtro-btn" id="f-casa" onclick="filtrarCategoria('casa')">🏠 Dicas Casa</button>
+      <button class="filtro-btn" id="f-bolos" onclick="filtrarCategoria('bolos')">🍰 Bolos</button>
+      <button class="filtro-btn" id="f-comidas" onclick="filtrarCategoria('comidas')">🍲 Comidas</button>
+      <button class="filtro-btn" id="f-molhos" onclick="filtrarCategoria('molhos')"> Tomato Molhos</button>
     </nav>
 
-    <!-- ABA 1: VITRINE DA MINILOJA -->
-    <div id="content-vitrine" class="tab-content active">
-     <button class="tab-btn" style="background-color: #2563eb; color: white; pointer-events: none;">OFERTAS A CADA 30 MIN.</button>
-        <!-- Elementos injetados de forma dinâmica pelo motor JavaScript -->
-      </div>
+    <!-- Bloco Dinâmico de Dicas (Muda de acordo com o clique no menu) -->
+    <div class="card-dica" id="painel-dica-diaria">
+      <h4 style="color:#c084fc; font-size:13px; font-weight:800; display:flex; align-items:center; gap:6px;" id="dica-titulo">💡 DICA DO DIA</h4>
+      <p style="font-size:11px; color:#f4f4f5; margin-top:6px; opacity:0.85; line-height:1.5;" id="dica-texto">
+        Seja bem-vindo! Navegue pelos nossos espaços para conferir receitas exclusivas, truques de organização para o lar e os melhores achados promocionais para a sua cozinha!
+      </p>
     </div>
 
-    <!-- ABA 2: CRIADOR DE REELS (MÔNICA IA) -->
-    <div id="content-monica" class="tab-content">
-      <div style="background:#141417; border:1px solid rgba(255,255,255,.05); border-radius:16px; padding:20px; text-align:center;">
-        <h3 style="color:#c084fc; font-size:16px; font-weight:bold;">Estúdio de Renderização Vertical</h3>
-        <p style="font-size:12px; color:#71717a; margin-top:4px;">Geração automatizada de criativos de alta conversão.</p>
-        
-        <!-- Player de Pré-visualização do Reels -->
-        <div class="preview-916" id="player-status">
-          <span style="font-size:32px; margin-bottom:8px;">🎬</span>
-          <span id="txt-status-player" style="font-size:12px; color:#71717a; text-align:center; padding:0 10px;">Aguardando seleção...</span>
-          <div class="progress-bar-container" id="p-container">
-            <div class="progress-bar-fill" id="p-fill"></div>
-          </div>
-        </div>
+    <!-- Container onde entrarão os Anúncios e Conteúdos -->
+    <main id="vitrine-dinamica">
+      <!-- Injetado de forma inteligente via script.js -->
+    </main>
 
-        <div style="background-color:#09090b; padding:12px; border-radius:8px; font-size:12px; text-align:left; border:1px solid rgba(255,255,255,.05);">
-          <span style="color:#71717a;">Produto Alvo:</span>
-          <strong id="target-product-name" style="color:#4ade80;">Nenhum produto em automação</strong>
-        </div>
-      </div>
-    </div>
-
-    <!-- ABA 3: RADAR ADMIN (MONITORAMENTO DO BANCO D1) -->
-    <div id="content-radar" class="tab-content">
-      <div style="background:#141417; border:1px solid rgba(255,255,255,.05); border-radius:16px; padding:20px;">
-        <h3 style="color:#4ade80; font-size:16px; font-weight:bold; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,.05); padding-bottom:8px;">Vigilância de Execuções Autônomas</h3>
-        
-        <div style="margin-bottom:12px;">
-          <span style="display:block; font-size:12px; color:#71717a;">ID Magazine Luiza:</span>
-          <input type="text" value="magazinehdmicroloja" disabled style="width:100%; padding:10px; background:#09090b; border:1px solid rgba(255,255,255,.05); color:#4ade80; font-weight:bold; border-radius:6px; cursor:not-allowed;">
-        </div>
-        <div style="margin-bottom:12px;">
-          <span style="display:block; font-size:12px; color:#71717a;">ID Amazon Tag:</span>
-          <input type="text" value="coloposte-20" disabled style="width:100%; padding:10px; background:#09090b; border:1px solid rgba(255,255,255,.05); color:#4ade80; font-weight:bold; border-radius:6px; cursor:not-allowed;">
-        </div>
-        <div style="margin-bottom:15px;">
-          <span style="display:block; font-size:12px; color:#71717a;">ID Shopee Track:</span>
-          <input type="text" value="18338650355" disabled style="width:100%; padding:10px; background:#09090b; border:1px solid rgba(255,255,255,.05); color:#4ade80; font-weight:bold; border-radius:6px; cursor:not-allowed;">
-        </div>
-
-        <div style="padding:10px; background:rgba(234,179,8,0.1); border:1px solid rgba(234,179,8,0.3); border-radius:6px; color:#eab308; font-size:12px; font-weight:bold; text-align:center;">
-          💛 Gaveta Separada do Mercado Livre Ativa no D1
-        </div>
-      </div>
-    </div>
-
-    <!-- Rodapé Tradicional -->
     <footer style="text-align: center; font-size: 9px; letter-spacing: 2px; color: #71717a; margin-top: 32px; text-transform: uppercase;">
-      FÁBRICA CENTRAL BLOKINHO • FUSÃO COMPLETA TAIWIND
+      FÁBRICA CENTRAL BLOKINHO • CONTEÚDO DINÂMICO
     </footer>
 
   </div>
