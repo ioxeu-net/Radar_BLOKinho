@@ -1,0 +1,94 @@
+const API_URL = window.location.origin;
+
+function validarAcessoAdmin() {
+  const entrada = document.getElementById('txt-senha').value;
+  if (entrada === "0660") {
+    document.getElementById('caixa-autenticacao').style.display = 'none';
+    document.getElementById('painel-privado').style.display = 'block';
+  } else {
+    alert("❌ PIN Incorreto! Acesso negado.");
+    document.getElementById('txt-senha').value = '';
+  }
+}
+
+function mudarAba(alvo) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(`content-${alvo}`).classList.add('active');
+  document.getElementById(`btn-${alvo}`).classList.add('active');
+}
+
+// 📻 MÓDULO EXCLUSIVO MUNDO RETRÔ ANOS 50/60
+function gerarLayoutAnuncioRetro() {
+  const nome = document.getElementById('retro-input-nome').value.trim();
+  const preco = document.getElementById('retro-input-preco').value.trim();
+  
+  if (!nome) {
+    alert("Por favor, digite o nome do produto para o criativo vintage!");
+    return;
+  }
+
+  document.getElementById('retro-txt-titulo').innerText = nome.toUpperCase();
+  if (preco) document.getElementById('retro-txt-preco').innerText = preco;
+  
+  const copysVintage = [
+    `"Distinção e modernidade para a dona de casa exigente! O formidável ${nome} chegou para trazer felicidade ao seu lar!"`,
+    `"Economize tempo e garanta elegância com o sensacional ${nome}. Uma utilidade prática aprovada pelas famílias mais distintas!"`,
+    `"Não fique para trás na era da automação moderna! Adquira hoje mesmo o magnífico ${nome} para o conforto de toda a sua família."`
+  ];
+  
+  const copySugerida = copysVintage[Math.floor(Math.random() * copysVintage.length)];
+  document.getElementById('retro-txt-copy').innerText = copySugerida;
+}
+
+async function gerarLinkUnitario() {
+  const url = document.getElementById('input-unitario').value.trim();
+  if (!url) return;
+  let urlLimpa = url.split('?');
+  await fetch(`${API_URL}/api/achadinhos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plataforma: "mercado_livre", url_original: urlLimpa, texto_bruto: "Manual Link Unitário ML" })
+  });
+  alert("Link gravado na gaveta mercado_livre!");
+  document.getElementById('input-unitario').value = '';
+}
+
+async function gerarLoteLinks() {
+  const texto = document.getElementById('input-lote').value;
+  if (!texto) return;
+  const regex = /(https?:\/\/[^\s]+)/g;
+  const links = texto.match(regex);
+  let c = 0;
+  if (links) {
+    for (let l of links) {
+      if (l.includes('mercadolivre.com') || l.includes('mlb.io') || l.includes('meli.la')) {
+        let limpo = l.split('?');
+        c++;
+        await fetch(`${API_URL}/api/achadinhos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plataforma: "mercado_livre", url_original: limpo, texto_bruto: "Manual Lote Extrator" })
+        });
+      }
+    }
+  }
+  alert(`Lote processado! ${c} links salvos no D1.`);
+  document.getElementById('input-lote').value = '';
+}
+
+async function carregarDadosD1DoPainel() {
+  const logBox = document.getElementById('log-tabelas-painel');
+  logBox.innerHTML = '<div>Buscando dados no D1...</div>';
+  try {
+    const res = await fetch(`${API_URL}/api/achadinhos-ler`);
+    const dados = await res.json();
+    logBox.innerHTML = '';
+    dados.forEach(p => {
+      const item = document.createElement('div');
+      item.style.cssText = "background:#09090b; padding:8px; border-radius:6px; border-left:3px solid #10b981; text-align:left; margin-bottom:6px;";
+      item.innerHTML = `<div style='display:flex; justify-content:space-between; font-size:10px; color:#71717a;'><span>${p.plataforma.toUpperCase()}</span></div><div style='color:#f4f4f5; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>${p.texto_bruto || p.url_original}</div>`;
+      logBox.appendChild(item);
+    });
+  } catch(e) { logBox.innerHTML = '<div>Erro ao conectar com o D1.</div>'; }
+}
