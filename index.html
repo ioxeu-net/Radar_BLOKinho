@@ -3,118 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Miniloja Relâmpago - Revistas & Ofertas</title>
-  <style>
-    *,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb;--tw-translate-x:0;--tw-translate-y:0;--tw-scale-x:1;--tw-scale-y:1}
-    body{background-color:#09090b;color:#f4f4f5;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;padding:16px;min-height:100vh}
-    .container{width:100%;max-width:480px;margin-left:auto;margin-right:auto}
-    
-    /* 📰 BANNER DE REVISTAS INFINITO (ESTILO MARQUEE) */
-    .banner-revistas-container {
-      width: 100%;
-      overflow: hidden;
-      background: linear-gradient(90deg, #1e1b4b 0%, #311042 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 12px 0;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-    }
-    .marquee-track {
-      display: flex;
-      width: max-content;
-      animation: rolagemInfinita 20s linear infinite;
-    }
-    /* Pausa o banner quando passa o dedo ou o mouse por cima */
-    .banner-revistas-container:hover .marquee-track, 
-    .banner-revistas-container:active .marquee-track {
-      animation-play-state: paused;
-    }
-    .revista-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #facc15;
-      font-weight: 800;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 0 25px;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s;
-    }
-    .revista-item:hover {
-      color: #4ade80;
-    }
-    @keyframes rolagemInfinita {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .status-badge{display:inline-block;font-size:10px;font-weight:bold;letter-spacing:2px;color:#10b981;background:rgba(16,185,129,.1);padding:4px 10px;border-radius:20px;margin-bottom:8px}
-    .menu-filtros{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-    .filtro-btn{flex:1;min-width:90px;background-color:#141417;color:#71717a;border:1px solid rgba(255,255,255,.05);padding:10px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:11px;text-align:center;transition:all .2s}
-    .filtro-btn.active{background-color:#27272a;color:#4ade80;border-color:#4ade80}
-    .card-dica{background:linear-gradient(135deg, #131224 0%, #09090b 100%);border:1px solid rgba(124, 58, 237, 0.2);border-radius:14px;padding:16px;margin-bottom:16px}
-    .product-card{background:#141417;border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:12px}
-    .badge-off{background:rgba(16,185,129,.1);color:#10b981;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px}
-    .btn-zap{width:100%;background-color:#10b981;color:white;border:none;padding:12px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;text-transform:uppercase}
-  </style>
+  <title>Miniloja Relâmpago - Comunidade SoCialBr</title>
+  <!-- SDK Oficial do Telegram Mini Apps -->
+  <script src="https://telegram.org"></script>
+  <!-- Conecta com o arquivo de design separado da loja -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="container">
+  <!-- BOTÃO FLUTUANTE DO MENU HAMBÚRGUER (EXCLUSIVO PARA CELULAR) -->
+  <button class="menu-toggle-btn" id="btn-menu-celular" onclick="alternarMenuLateralMobile()">☰ Comunidades</button>
+
+  <div class="layout-banca-master">
     
-    <!-- 📰 BANNER ROTATIVO INTERATIVO DE REVISTAS NO TOPO -->
-    <div class="banner-revistas-container">
-      <div class="marquee-track">
-        <!-- Bloco Original de Itens -->
-        <div class="revista-item" onclick="clicarNaRevista('Culinária')">🍳 Revista Culinária</div>
-        <div class="revista-item" onclick="clicarNaRevista('Medicina')">⚕️ Revista Saúde & Medicina</div>
-        <div class="revista-item" onclick="clicarNaRevista('Pets')">🐾 Revista Mundo Pet</div>
-        <div class="revista-item" onclick="clicarNaRevista('Variedades')">💎 Revista HD Mix</div>
-        <!-- Duplicados idênticos para fazer a emenda infinita perfeita da rolagem -->
-        <div class="revista-item" onclick="clicarNaRevista('Culinária')">🍳 Revista Culinária</div>
-        <div class="revista-item" onclick="clicarNaRevista('Medicina')">⚕️ Revista Saúde & Medicina</div>
-        <div class="revista-item" onclick="clicarNaRevista('Pets')">🐾 Revista Mundo Pet</div>
-        <div class="revista-item" onclick="clicarNaRevista('Variedades')">💎 Revista HD Mix</div>
+    <!-- 🎛️ 1. RETAGUARDA ESQUERDA: O MENU LATERAL FIXO -->
+    <aside class="sidebar-comunidades" id="sidebar-painel">
+      <div class="sidebar-header">
+        <b class="logo-socialbr">SoCial<i>Br</i></b>
+        <p class="sub-logo">Sua Rede de Descontos</p>
       </div>
-    </div>
+      
+      <!-- Lista Oficial dos 6 Grupos Magnéticos -->
+      <nav class="lista-grupos-nav">
+        <button class="grupo-item-btn active" id="g-g1" onclick="selecionarGrupoComunidade('g1')">💰 Amantes de Precim</button>
+        <button class="grupo-item-btn" id="g-g2" onclick="selecionarGrupoComunidade('g2')">🎟️ Quero Meu Desconto</button>
+        <button class="grupo-item-btn" id="g-g3" onclick="selecionarGrupoComunidade('g3')">🏠 Modernidade Lar</button>
+        <button class="grupo-item-btn" id="g-g4" onclick="selecionarGrupoComunidade('g4')">🍰 Confeitaria Fofosa</button>
+        <button class="grupo-item-btn" id="g-g5" onclick="selecionarGrupoComunidade('g5')">⚕️ Vida & Bem-Estar</button>
+        <button class="grupo-item-btn" id="g-g6" onclick="selecionarGrupoComunidade('g6')">🐾 Patinhas VIP</button>
+      </nav>
+    </aside>
 
-    <header style="text-align: center; margin-bottom: 15px;">
-      <span class="status-badge">● BANCA DIGITAL • ATUALIZADA</span>
-      <h1 style="font-size: 22px; font-weight: 900; color: #4ade80;" id="lblNomeLoja">MINILOJA RELÂMPAGO</h1>
-    </header>
+    <!-- 🛍️ 2. MIOLO CENTRAL: A VITRINE DE CONTEÚDOS E LANDING PAGE -->
+    <main class="conteudo-principal-feed">
+      
+      <!-- O Letreiro Luminoso de Revistas no Topo -->
+      <div class="banner-revistas-container">
+        <div class="marquee-track">
+          <div class="revista-item" onclick="clicarRevistaBanner('g4')">🍳 Revista Culinária</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g5')">⚕️ Revista Saúde & Medicina</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g6')">🐾 Revista Mundo Pet</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g3')">🏠 Revista HD Lar</div>
+          <!-- Emenda Infinita -->
+          <div class="revista-item" onclick="clicarRevistaBanner('g4')">🍳 Revista Culinária</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g5')">⚕️ Revista Saúde & Medicina</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g6')">🐾 Revista Mundo Pet</div>
+          <div class="revista-item" onclick="clicarRevistaBanner('g3')">🏠 Revista HD Lar</div>
+        </div>
+      </div>
 
-    <!-- Menu Expandido para as Novas Categorias -->
-    <nav class="menu-filtros">
-      <button class="filtro-btn active" id="f-todos" onclick="filtrarCategoria('todos')">🌐 Tudo</button>
-      <button class="filtro-btn" id="f-casa" onclick="filtrarCategoria('casa')">🏠 Casa</button>
-      <button class="filtro-btn" id="f-bolos" onclick="filtrarCategoria('bolos')">🍰 Bolos</button>
-      <button class="filtro-btn" id="f-comidas" onclick="filtrarCategoria('comidas')">🍲 Comidas</button>
-      <button class="filtro-btn" id="f-molhos" onclick="filtrarCategoria('molhos')">🍅 Molhos</button>
-      <button class="filtro-btn" id="f-medicina" onclick="filtrarCategoria('medicina')">⚕️ Medicina</button>
-      <button class="filtro-btn" id="f-pets" onclick="filtrarCategoria('pets')">🐾 Pets</button>
-    </nav>
+      <!-- Abertura de Impacto Comercial -->
+      <section class="hero-comercial-topo">
+        <span class="status-badge">● INFRAESTRUTURA UNIFICADA v5.0</span>
+        <h2 class="chamada-principal">ACHEI, ufaaa!!!<br>É seu em 1 clique.</h2>
+        <p class="sub-chamada">Chega mais! Sem robô azul te vigiando, sem complicação. Só os achadinhos reais que economizam o seu dinheiro e dão um upgrade na sua vida.</p>
+      </section>
 
-    <div class="card-dica" id="painel-dica-diaria">
-      <h4 style="color:#c084fc; font-size:13px; font-weight:800; display:flex; align-items:center; gap:6px;" id="dica-titulo">💡 EDIVALDO BANCA</h4>
-      <p style="font-size:11px; color:#f4f4f5; margin-top:6px; opacity:0.85; line-height:1.5;" id="dica-texto">
-        Clique nos botões ou pare a rolagem do banner de revistas para filtrar dicas e promoções personalizadas em tempo real!
-      </p>
-    </div>
+      <!-- 📻 SEÇÃO DESTAQUE: O ACHADO VINTAGE DA SEMANA (MUNDO RETRÔ) -->
+      <section id="bloco-destaque-retro" class="secao-container-bloco">
+        <h3 class="titulo-secao-premium">📻 O Achado Vintage da Semana</h3>
+        <div class="moldura-retro-cartaz" id="container-anuncio-retro">
+          <span class="badge-vintage-promo">Magnífica Novidade!</span>
+          <h4 id="retro-exibe-titulo">NENHUM CRIATIVO RECENTE</h4>
+          <div class="linha-divisora-retro"></div>
+          <p id="retro-exibe-copy">"Os anúncios retrô mais charmosos gerados no seu painel privado aparecerão em destaque exclusivo nesta seção nostálgica!"</p>
+          <div class="retro-tag-preco" id="retro-exibe-preco">Consulte a Banca</div>
+        </div>
+      </section>
 
-    <main id="vitrine-dinamica">
-      <!-- Injetado via script.js -->
+      <!-- ⚡ SEÇÃO: GARIMPO NO PILOTO AUTOMÁTICO (CARROSSEL QUADRADO) -->
+      <section class="secao-container-bloco">
+        <h3 class="titulo-secao-premium">⚡ Ofertas Relâmpago do BLOKinho</h3>
+        <p style="font-size: 12px; color: #71717a; margin-bottom: 15px;">Atualizado automaticamente via Cron a cada 30 minutos.</p>
+        
+        <!-- Bloco Quadrado de 4 Vagas Compartilhadas -->
+        <div class="carrossel-quadrado-lote" id="grid-carrossel-cron">
+          <div class="vaga-anuncio-box">Aguardando lote...</div>
+          <div class="vaga-anuncio-box">Aguardando lote...</div>
+          <div class="vaga-anuncio-box">Aguardando lote...</div>
+          <div class="vaga-anuncio-box">Aguardando lote...</div>
+        </div>
+      </section>
+
+      <!-- 💬 3. A BASE INTERATIVA: MURAL DE RECADOS DO SOCIALBR -->
+      <section class="secao-container-bloco" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 25px;">
+        <h3 class="titulo-secao-premium" id="mural-titulo-comunidade">💬 Mural de Amantes de Precim</h3>
+        <p style="font-size: 12px; color: #71717a; margin-bottom: 15px;">Troque experiências e combine compras direto na nossa rede sem usar o WhatsApp.</p>
+        
+        <!-- Formulário Criptografado de Envio de Mensagem -->
+        <form id="form-recado-social" class="card-mural-post" onsubmit="publicarMensagemMuralServidor(event)">
+          <textarea id="txt-mural-mensagem" maxlength="500" required placeholder="Digite sua dúvida ou comentário sobre os achadinhos deste grupo..."></textarea>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="txt-mural-autor" placeholder="Seu nome..." required style="flex: 1; padding: 10px; background: #09090b; border: 1px solid rgba(255,255,255,0.05); color: #fff; border-radius: 6px; font-size: 12px;">
+            <button type="submit" class="btn-postar-mural">Publicar Recado</button>
+          </div>
+        </form>
+
+        <!-- Lista Dinâmica de Conversas dos Membros -->
+        <div class="lista-recados-mural" id="box-mensagens-mural">
+          <div style="color: #71717a; text-align: center; font-size: 12px; padding: 20px;">Nenhum recado nesta comunidade ainda. Seja o primeiro!</div>
+        </div>
+      </section>
+
+      <!-- Rodapé Institucional Fixo -->
+      <footer class="rodape-banca-final">
+        © 2026 aLojinha • Ofertas e conversas atualizadas automaticamente a cada 30 min.
+      </footer>
     </main>
-
-    <footer style="text-align: center; font-size: 9px; letter-spacing: 2px; color: #71717a; margin-top: 32px; text-transform: uppercase;">
-      FÁBRICA CENTRAL BLOKINHO • BANCA E VITRINE
-    </footer>
-
   </div>
 
+  <!-- Conecta com a inteligência unificada -->
   <script src="script.js"></script>
 </body>
 </html>
