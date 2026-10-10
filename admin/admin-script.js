@@ -1,12 +1,11 @@
 const API_URL = window.location.origin;
 
-// 🔒 VALIDAÇÃO DO PIN DE ACESSO EXCLUSIVO
+// VALIDAÇÃO DO PIN DE ACESSO
 function validarAcessoAdmin() {
   const entrada = document.getElementById('txt-senha').value;
   if (entrada === "0660") {
     document.getElementById('caixa-autenticacao').style.display = 'none';
     document.getElementById('painel-privado').style.display = 'block';
-    // Carrega os logs automáticos ao destravar com sucesso
     carregarDadosD1DoPainel();
   } else {
     alert("❌ PIN Incorreto! Acesso negado.");
@@ -14,7 +13,6 @@ function validarAcessoAdmin() {
   }
 }
 
-// 📑 GERENCIADOR DE TROCA DE ABAS POR CLIQUE
 function mudarAba(alvo) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -22,90 +20,44 @@ function mudarAba(alvo) {
   document.getElementById(`btn-${alvo}`).classList.add('active');
 }
 
-// 📻 INTELIGÊNCIA PUBLICITÁRIA DO MUNDO RETRÔ (ANOS 50/60)
+// 📻 SIMULADOR MUNDO RETRÔ
 function gerarLayoutAnuncioRetro() {
   const nome = document.getElementById('retro-input-nome').value.trim();
   const preco = document.getElementById('retro-input-preco').value.trim();
   
   if (!nome) {
-    alert("Por favor, digite o nome do produto para o criativo vintage!");
+    alert("Por favor, digite o nome do produto!");
     return;
   }
 
-  // Alimenta em tempo real a moldura estética retrô
   document.getElementById('retro-txt-titulo').innerText = nome.toUpperCase();
-  if (preco) {
-    document.getElementById('retro-txt-preco').innerText = preco;
-  } else {
-    document.getElementById('retro-txt-preco').innerText = "Consulte a nossa banca";
-  }
+  document.getElementById('retro-txt-preco').innerText = preco ? preco : "Consulte a nossa banca";
   
-  // Dicionário de slogans autênticos da era de ouro da publicidade americana/brasileira
   const copysVintage = [
-    `"Distinção e elegância para a dona de casa exigente! O formidável ${nome} chegou para trazer felicidade e modernidade ao seu distinto lar!"`,
-    `"Economize valiosos minutos e garanta o contentamento da família com o sensacional ${nome}. Uma utilidade prática indispensável!"`,
-    `"Não fique para trás na gloriosa era da automação! Adquira hoje mesmo o magnífico ${nome} para o conforto mecânico de sua residência."`
+    `"Distinção para a dona de casa! O formidável ${nome} chegou para trazer modernidade ao seu lar!"`,
+    `"Economize minutos e garanta o contentamento com o sensacional ${nome}."`
   ];
   
-  const copySugerida = copysVintage[Math.floor(Math.random() * copysVintage.length)];
-  document.getElementById('retro-txt-copy').innerText = copySugerida;
+  document.getElementById('retro-txt-copy').innerText = copysVintage[Math.floor(Math.random() * copysVintage.length)];
 }
 
-// 💛 GERADOR EXCLUSIVO MLB 1 (UNITÁRIO)
+// GERADORES MANUAIS MERCADO LIVRE
 async function gerarLinkUnitario() {
   const url = document.getElementById('input-unitario').value.trim();
   if (!url) return;
   let urlLimpa = url.split('?')[0];
 
-  try {
-    await fetch(`${API_URL}/api/achadinhos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        plataforma: "mercado_livre", 
-        url_original: urlLimpa, 
-        texto_bruto: "Link Unitário gerado via Carwash Executivo ML" 
-      })
-    });
-    alert("Link higienizado e arquivado com sucesso na gaveta mercado_livre!");
-    document.getElementById('input-unitario').value = '';
-    carregarDadosD1DoPainel(); // Recarrega os registros
-  } catch (e) {
-    alert("Falha ao comunicar com a API do Pages.");
-  }
-}
-
-// 📦 GERADOR EXCLUSIVO MLB 2 (LOTES)
-async function gerarLoteLinks() {
-  const texto = document.getElementById('input-lote').value;
-  if (!texto) return;
-  const regex = /(https?:\/\/[^\s]+)/g;
-  const links = texto.match(regex);
-  let c = 0;
-
-  if (links) {
-    for (let l of links) {
-      if (l.includes('mercadolivre.com') || l.includes('mlb.io') || l.includes('meli.la')) {
-        let limpo = l.split('?')[0];
-        c++;
-        await fetch(`${API_URL}/api/achadinhos`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-            plataforma: "mercado_livre", 
-            url_original: limpo, 
-            texto_bruto: "Produto importado em lote através do extrator executivo" 
-          })
-        });
-      }
-    }
-  }
-  alert(`Importação concluída! ${c} links salvos isolados no D1.`);
-  document.getElementById('input-lote').value = '';
+  await fetch(`${API_URL}/api/achadinhos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plataforma: "mercado_livre", url_original: urlLimpa, texto_bruto: "Manual Unitário" })
+  });
+  alert("Link arquivado no D1!");
+  document.getElementById('input-unitario').value = '';
   carregarDadosD1DoPainel();
 }
 
-// 📡 LEITOR EM TEMPO REAL DO BANCO CLOUDFLARE D1
+// 📡 LEITOR DO BANCO D1 COM BOTÃO COMPARTILHAR/COPIAR REAL
 async function carregarDadosD1DoPainel() {
   const logBox = document.getElementById('log-tabelas-painel');
   if (!logBox) return;
@@ -116,25 +68,31 @@ async function carregarDadosD1DoPainel() {
     const dados = await res.json();
     
     if (dados.length === 0) {
-      logBox.innerHTML = '<div style="color:#71717a; text-align:center; padding:10px;">Nenhum anúncio capturado pelas partições ainda.</div>';
+      logBox.innerHTML = '<div style="color:#71717a; text-align:center; padding:10px;">Nenhum anúncio capturado ainda.</div>';
       return;
     }
     
     logBox.innerHTML = '';
     dados.forEach(p => {
       const item = document.createElement('div');
-      item.style.cssText = "background:#09090b; padding:10px; border-radius:8px; border-left:3px solid #10b981; text-align:left; margin-bottom:6px; border-top: 1px solid rgba(255,255,255,0.02);";
+      item.style.cssText = "background:#09090b; padding:12px; border-radius:8px; border-left:3px solid #10b981; text-align:left; margin-bottom:8px; display:flex; flex-direction:column; gap:6px;";
       
-      // Define a tag de cor baseada no tipo de plataforma capturada
       let tagCor = p.plataforma === "mercado_livre" ? "#eab308" : "#10b981";
       
+      // Armazena o link de forma segura para a função de cópia
+      const urlTratada = p.url_original.replace(/'/g, "\\'");
+      
       item.innerHTML = `
-        <div style='display:flex; justify-content:space-between; font-size:10px; font-weight:bold; color:${tagCor}; margin-bottom:4px;'>
+        <div style='display:flex; justify-content:space-between; font-size:10px; font-weight:bold; color:${tagCor};'>
           <span>${p.plataforma.toUpperCase()}</span>
           <span style='color:#71717a;'>${new Date(p.data_captura).toLocaleTimeString('pt-BR')}</span>
         </div>
         <div style='color:#f4f4f5; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>
           ${p.texto_bruto || p.url_original}
+        </div>
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <a href="${p.url_original}" target="_blank" style="background:#1e293b; color:#4ade80; padding:4px 8px; border-radius:4px; font-size:11px; text-decoration:none; font-weight:bold; text-align:center; flex:1;">🔗 Abrir Link</a>
+          <button onclick="copiarLinkDireto('${urlTratada}')" style="background:#27272a; color:#fff; border:1px solid #3f3f46; padding:4px 8px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:bold; flex:1;">📋 Copiar Link</button>
         </div>`;
       logBox.appendChild(item);
     });
@@ -143,3 +101,8 @@ async function carregarDadosD1DoPainel() {
   }
 }
 
+// Função executada pelo clique do mouse que joga o link direto na sua memória
+function copiarLinkDireto(link) {
+  navigator.clipboard.writeText(link);
+  alert("Link copiado com sucesso! Pronto para colar no seu anúncio Retrô ou MônicaIA.");
+}
