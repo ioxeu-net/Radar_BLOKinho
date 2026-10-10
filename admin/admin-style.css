@@ -1,1 +1,213 @@
+/* Layout Geral do Painel Administrativo */
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+  font-family: system-ui, -apple-system, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* Caixa de Login Restrito */
+.login-box {
+  background: #141417;
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 340px;
+}
+
+.login-box h2 {
+  color: #4ade80;
+  margin-bottom: 20px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+.pin-input {
+  width: 100%;
+  padding: 14px;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  outline: none;
+  margin-bottom: 15px;
+}
+
+.pin-input:focus {
+  border-color: #4ade80;
+}
+
+.btn-login {
+  width: 100%;
+  background: #4ade80;
+  color: #09090b;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* Estrutura do Painel Privado */
+#painel-privado {
+  display: none;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #eab308;
+  background: rgba(234, 179, 8, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+/* Menu de Abas Dinâmicas */
+.tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 105px;
+  background-color: #141417;
+  color: #71717a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 11px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background-color: #27272a;
+  color: #f4f4f5;
+  border-color: #4b5563;
+}
+
+/* Blocos de Conteúdo e Cards */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.card-admin, .card-retro-studio {
+  background: #141417;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 11px;
+  background-color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: #f4f4f5;
+  font-size: 13px;
+  margin-bottom: 10px;
+  outline: none;
+}
+
+.btn-action {
+  width: 100%;
+  background-color: #eab308;
+  color: #09090b;
+  border: none;
+  padding: 11px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* 📻 VISUALIZADOR VINTAGE MUNDO RETRÔ (ANOS 50/60) */
+.moldura-retro-anuncio {
+  width: 100%;
+  max-width: 320px;
+  background-color: #f2ebd9;
+  border: 6px double #3b2d20;
+  padding: 20px;
+  margin: 15px auto;
+  color: #3b2d20;
+  font-family: "Georgia", serif;
+  text-align: center;
+  box-shadow: 5px 5px 0px #1e1b4b;
+  position: relative;
+}
+
+.retro-badge-promo {
+  background: #c2410c;
+  color: #f2ebd9;
+  font-weight: bold;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+/* MônicaIA Player Visual 9:16 */
+.preview-916 {
+  width: 160px;
+  height: 284px;
+  background-color: #000;
+  border: 2px dashed #7c3aed;
+  border-radius: 12px;
+  margin: 15px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.progress-bar-container {
+  width: 80%;
+  background-color: #27272a;
+  height: 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+  display: none;
+}
+
+.progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background-color: #7c3aed;
+  border-radius: 3px;
+}
 
