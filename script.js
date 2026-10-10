@@ -1,42 +1,78 @@
-let dadosLoja = {
-  nome: "MINILOJA RELÂMPAGO",
-  produtos: [
-    { nome: "Jogo Gabinete RGB Mid Tower", link: "https://shopee.com.br" },
-    { nome: "Kit Teclado + Mouse Gamer", link: "https://amazon.com.br" }
-  ]
+// Dicionário de conteúdos e dicas por categoria para manter a página dinâmica
+const CONTEUDOS_DICAS = {
+  todos: {
+    titulo: "💡 ESPAÇO COOPERATIVO HD",
+    texto: "Seja bem-vindo! Navegue pelos nossos espaços para conferir receitas exclusivas, truques de organização para o lar e os melhores achados promocionais para a sua cozinha!"
+  },
+  casa: {
+    titulo: "🏠 TRUQUE DE DONA DE CASA",
+    texto: "Para tirar manchas de gordura de potes plásticos rapidamente: coloque um pouco de detergente, água morna e um pedaço de papel toalha dentro. Tampe e balance bem por 30 segundos usando as mãos. Fica limpinho!"
+  },
+  bolos: {
+    titulo: "🍰 SEGREDO DO BOLO FOCOSO",
+    texto: "Quer um bolo de chocolate super fofinho e úmido? Substitua o leite da receita tradicional por água morna e adicione uma colher de café de bicarbonato de sódio junto ao fermento. A massa cresce muito mais!"
+  },
+  comidas: {
+    titulo: "🍲 COMIDA DE UM PANELÃO SÓ",
+    texto: "Dias corridos pedem praticidade! Experimente selar a carne na panela de pressão, adicionar o arroz cru, vegetais picados e cobrir com água fervente. Feche a pressão e conte apenas 3 minutos após chiar. Refeição completa!"
+  },
+  molhos: {
+    titulo: "🍅 MOLHO DE TOMATE ARTESANAL",
+    texto: "Para cortar a acidez natural do molho de tomate sem usar açúcar, adicione uma cenoura pequena inteira descascada para cozinhar junto no extrato. Ela absorve toda a acidez e deixa o sabor suave!"
+  }
 };
 
-const API_URL = window.location.origin;
+// Seus produtos cadastrados no sistema divididos por nicho/categoria
+let produtosLoja = [
+  { nome: "Kit 12 Potes Organizadores Herméticos para Molhos e Temperos", link: "https://shopee.com.br", categoria: "molhos" },
+  { nome: "Batedeira Planetária de Alta Performance para Massas e Bolos", link: "https://amazon.com.br", categoria: "bolos" },
+  { nome: "Mesa de Cabeceira Suspensa - Organização Casa", link: "https://magazinevoce.com.br", categoria: "casa" },
+  { nome: "Jogo de Panelas Antiaderente Cerâmica Premium", link: "https://shopee.com.br", categoria: "comidas" }
+];
 
-function mudarAba(alvo) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  
-  const bloco = document.getElementById(`content-${alvo}`);
-  const botao = document.getElementById(`btn-${alvo}`);
-  if (bloco) bloco.classList.add('active');
-  if (botao) botao.classList.add('active');
+let categoriaAtivaLocal = "todos";
+
+function filtrarCategoria(categoriaAlvo) {
+  categoriaAtivaLocal = categoriaAlvo;
+
+  // Atualiza as cores dos botões de filtro usando o mouse
+  document.querySelectorAll('.filtro-btn').forEach(btn => btn.classList.remove('active'));
+  const botaoAtivo = document.getElementById(`f-${categoriaAlvo}`);
+  if (botaoAtivo) botaoAtivo.classList.add('active');
+
+  // Muda dinamicamente o texto informativo da dica correspondente
+  const dica = CONTEUDOS_DICAS[categoriaAlvo];
+  document.getElementById('dica-titulo').innerText = dica.titulo;
+  document.getElementById('dica-texto').innerText = dica.texto;
+
+  renderizarFiltroProdutos();
 }
 
-function renderizarCardsVitrine() {
-  const box = document.getElementById('vitrine-produtos');
-  if (!box) return;
-  box.innerHTML = '';
+function renderizarFiltroProdutos() {
+  const container = document.getElementById('vitrine-dinamica');
+  if (!container) return;
+  container.innerHTML = '';
 
-  dadosLoja.produtos.forEach((prod, idx) => {
-    const nomeLimpo = prod.nome.replace(/'/g, "\\'");
-    box.innerHTML += `
+  // Filtra de forma inteligente os anúncios daquela pasta
+  const produtosFiltrados = categoriaAtivaLocal === "todos" 
+    ? produtosLoja 
+    : produtosLoja.filter(p => p.categoria === categoriaAtivaLocal);
+
+  if (produtosFiltrados.length === 0) {
+    container.innerHTML = '<div style="color:#71717a; text-align:center; font-size:12px; padding:20px;">Aguardando novos achadinhos automáticos do robô para este espaço...</div>';
+    return;
+  }
+
+  produtosFiltrados.forEach((prod, idx) => {
+    container.innerHTML += `
       <div class="product-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="badge-off">-30% OFF</span>
-          <span style="font-size:11px; color:#71717a;">Item #${idx+1}</span>
+          <span style="font-size:10px; color:#71717a; text-transform:uppercase; font-weight:bold;">✨ ${prod.categoria}</span>
         </div>
-        <h3 style="font-size:14px; font-weight:700; margin-top:8px;">${prod.nome}</h3>
-        <p style="font-size:11px; color:#71717a; word-break:break-all; margin:4px 0 12px 0; font-family:monospace;">${prod.link}</p>
-        <button style="width:100%; background-color:#7c3aed; color:white; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:12px; margin-bottom:8px; cursor:pointer; text-transform:uppercase;" onclick="executarAnimacaoReels('${nomeLimpo}')">
-          ⚡ Criar Reels (MônicaIA)
-        </button>
-        <button style="width:100%; background-color:#10b981; color:white; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;" onclick="window.open('${prod.link}', '_blank')">
+        <h3 class="prod-title">${prod.nome}</h3>
+        <p class="prod-link">${prod.link}</p>
+        <button class="btn-zap" onclick="window.open('${prod.link}', '_blank')">
           🟢 1 CLIQUE ZAP / COMPRAR
         </button>
       </div>
@@ -44,95 +80,16 @@ function renderizarCardsVitrine() {
   });
 }
 
-function executarAnimacaoReels(nomeItem) {
-  document.getElementById('target-product-name').innerText = nomeItem;
-  document.getElementById('txt-status-player').innerHTML = `<span style="color:#bc95ff; font-weight:bold;">MônicaIA<br>Renderizando...</span>`;
-  const pContainer = document.getElementById('p-container');
-  const pFill = document.getElementById('p-fill');
-  if (pContainer) pContainer.style.display = 'block';
-  if (pFill) pFill.style.width = '0%';
-  
-  mudarAba('monica');
-
-  let progresso = 0;
-  const intervalo = setInterval(() => {
-    progresso += 10;
-    if (pFill) pFill.style.width = `${progresso}%`;
-    if (progresso >= 100) {
-      clearInterval(intervalo);
-      document.getElementById('txt-status-player').innerHTML = `<span style="color:#4ade80; font-weight:bold;">🎬 Vídeo Ready 9:16<br>MônicaIA Finalizou!</span>`;
-      if (pContainer) pContainer.style.display = 'none';
-    }
-  }, 120);
-}
-
-// 💛 LÓGICA DO GERADOR EXCLUSIVO MLB 1 (UNITÁRIO)
-async function gerarLinkUnitario() {
-  const url = document.getElementById('input-unitario').value.trim();
-  if (!url) return;
-  let urlLimpa = url.split('?')[0];
-
-  await fetch(`${API_URL}/api/achadinhos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ plataforma: "mercado_livre", url_original: urlLimpa, texto_bruto: "Manual Link Unitário" })
-  });
-  alert("Link higienizado e salvo na gaveta mercado_livre!");
-  document.getElementById('input-unitario').value = '';
-}
-
-// 📦 LÓGICA DO GERADOR EXCLUSIVO MLB 2 (LOTES)
-async function gerarLoteLinks() {
-  const texto = document.getElementById('input-lote').value;
-  if (!texto) return;
-  const regex = /(https?:\/\/[^\s]+)/g;
-  const links = texto.match(regex);
-  let c = 0;
-
-  if (links) {
-    for (let l of links) {
-      if (l.includes('mercadolivre.com') || l.includes('mlb.io') || l.includes('meli.la')) {
-        let limpo = l.split('?')[0];
-        c++;
-        await fetch(`${API_URL}/api/achadinhos`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ plataforma: "mercado_livre", url_original: limpo, texto_bruto: "Manual Lote Extrator" })
-        });
-      }
-    }
-  }
-  alert(`Importação em lote concluída! ${c} links salvos no D1.`);
-  document.getElementById('input-lote').value = '';
-}
-
-// 📡 LEITOR DO BANCO D1 REAL DIRETO NO PAINEL ADMIN
-async function carregarDadosD1DoPainel() {
-  const logBox = document.getElementById('log-tabelas-painel');
-  logBox.innerHTML = '<div style="color:#60a5fa; text-align:center; padding:10px;">Buscando dados no D1...</div>';
-  
-  try {
-    const res = await fetch(`${API_URL}/api/achadinhos-ler`);
-    if (!res.ok) throw new Error();
-    const dados = await res.json();
-    
-    if(dados.length === 0) {
-      logBox.innerHTML = '<div style="color:#71717a; text-align:center;">Nenhum produto capturado ainda.</div>';
-      return;
-    }
-    
-    logBox.innerHTML = '';
-    dados.forEach(p => {
-      const item = document.createElement('div');
-      item.style.cssText = "background:#09090b; padding:8px; border-radius:6px; border-left:3px solid #10b981;";
-      item.innerHTML = `<div style='display:flex; justify-content:space-between; font-size:10px; color:#71717a;'><span>${p.plataforma.toUpperCase()}</span><span>${new Date(p.data_captura).toLocaleTimeString('pt-BR')}</span></div><div style='color:#f4f4f5; margin-top:4px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;'>${p.texto_bruto || p.url_original}</div>`;
-      logBox.appendChild(item);
-    });
-  } catch(e) {
-    logBox.innerHTML = '<div style="color:#ef4444; text-align:center;">Erro ao conectar com o banco D1.</div>';
-  }
-}
-
 window.addEventListener('DOMContentLoaded', () => {
-  renderizarCardsVitrine();
+  // Tenta ler o hash se os dados vierem formatados via automação do WhatsApp
+  try {
+    const hash = window.location.hash;
+    if (hash && hash.includes('dados=')) {
+      const base64 = hash.split('dados=')[1];
+      const importados = JSON.parse(atob(base64));
+      if (importados.produtos) produtosLoja = importados.produtos;
+    }
+  } catch (e) { console.log("Aguardando feeds."); }
+
+  renderizarFiltroProdutos();
 });
