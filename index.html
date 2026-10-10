@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Achadinhos - Painel BLOKinho</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <h1>🤖 Central Achadinhos</h1>
+            <p>Gerenciamento Responsivo do BLOKinho</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Abas do sistema para navegação limpa por mouse -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="alternarAba('fila')">📋 Fila de Triagem</button>
+            <button class="tab-btn" onclick="alternarAba('config')">⚙️ Configurações</button>
+        </div>
+
+        <!-- Seção da Fila de Mensagens -->
+        <section id="aba-fila" class="tab-content active">
+            <div class="grid-produtos" id="lista-produtos">
+                <!-- Os cards de ofertas capturados pelo script entrarão aqui via JavaScript -->
+                <div class="card-vazio">Aguardando capturas automáticas do WhatsApp...</div>
+            </div>
+        </section>
+
+        <!-- Seção de Configurações e IDs -->
+        <section id="aba-config" class="tab-content">
+            <div class="card-config">
+                <h3>Seus Identificadores de Afiliado Protegidos</h3>
+                <div class="input-group">
+                    <label>ID Magazine Luiza:</label>
+                    <input type="text" value="magazinehdmicroloja" disabled>
+                </div>
+                <div class="input-group">
+                    <label>ID Amazon:</label>
+                    <input type="text" value="coloposte-20" disabled>
+                </div>
+                <div class="input-group">
+                    <label>ID Shopee:</label>
+                    <input type="text" value="18338650355" disabled>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
