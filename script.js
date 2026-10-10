@@ -1,71 +1,100 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const btnFila = document.getElementById('btn-fila');
-    const btnConfig = document.getElementById('btn-config');
-    const abaFila = document.getElementById('aba-fila');
-    const abaConfig = document.getElementById('aba-config');
-    const listaProdutos = document.getElementById('lista-produtos');
-    const btnCarregar = document.getElementById('btn-carregar');
+// Dados fixos da vitrine para teste inicial e homologação do painel
+let dadosLoja = {
+  nome: "MINILOJA RELÂMPAGO",
+  produtos: [
+    { nome: "Jogo Gabinete RGB Mid Tower", link: "https://shopee.com.br" },
+    { nome: "Kit Teclado + Mouse Gamer", link: "https://amazon.com.br" }
+  ]
+};
 
-    // Substitua pela URL do seu projeto do Cloudflare Pages (Ex: https://pages.dev)
-    const API_URL = window.location.origin;
+// Lógica de alternância de abas acionada via cliques do mouse (HTML inline onclick)
+function mudarAba(alvo) {
+  // Oculta todos os blocos de conteúdo e remove os estados ativos dos botões
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-    // Troca de abas usando o mouse
-    btnFila.addEventListener('click', () => {
-        btnFila.classList.add('active');
-        btnConfig.classList.remove('active');
-        abaFila.classList.add('active');
-        abaConfig.classList.remove('active');
-    });
+  // Ativa o bloco e o botão correspondente que recebeu o clique do mouse
+  const blocoAlvo = document.getElementById(`content-${alvo}`);
+  const botaoAlvo = document.getElementById(`btn-${alvo}`);
+  
+  if (blocoAlvo) blocoAlvo.classList.add('active');
+  if (botaoAlvo) botaoAlvo.classList.add('active');
+}
 
-    btnConfig.addEventListener('click', () => {
-        btnConfig.classList.add('active');
-        btnFila.classList.remove('active');
-        abaConfig.classList.add('active');
-        abaFila.classList.remove('active');
-    });
+// Injeta os cards de produtos de forma dinâmica na interface estruturada em Tailwind
+function renderizarCardsVitrine() {
+  const box = document.getElementById('vitrine-produtos');
+  if (!box) return;
+  box.innerHTML = '';
 
-    // Função que busca os dados gravados pelo Worker no banco D1
-    async function carregarFilaReal() {
-        listaProdutos.innerHTML = '<div class="card-vazio">Buscando ofertas no banco D1...</div>';
+  dadosLoja.produtos.forEach((prod, idx) => {
+    // Saneamento básico de caracteres para evitar quebras sintáticas na string
+    const nomeLimpo = prod.nome.replace(/'/g, "\\'");
+    
+    box.innerHTML += `
+      <div class="product-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="badge-off">-30% OFF</span>
+          <span style="font-size:11px; color:#71717a;">Item #${idx+1}</span>
+        </div>
+        <h3 style="font-size:14px; font-weight:700; margin-top:8px;">${prod.nome}</h3>
+        <p style="font-size:11px; color:#71717a; word-break:break-all; margin:4px 0 12px 0; font-family:monospace;">${prod.link}</p>
         
-        try {
-            // Como criamos a API dentro do mesmo Pages, chamamos a rota relativa
-            const response = await fetch(`${API_URL}/api/achadinhos-ler`);
-            if (!response.ok) throw new Error('Erro ao ler banco de dados');
-            
-            const produtos = await response.json();
-            
-            if (produtos.length === 0) {
-                listaProdutos.innerHTML = '<div class="card-vazio">Nenhum produto na fila. O WhatsApp está monitorando!</div>';
-                return;
-            }
+        <button style="width:100%; background-color:#7c3aed; color:white; border:none; padding:10px; border-radius:8px; font-weight:700; font-size:12px; margin-bottom:8px; cursor:pointer; text-transform:uppercase;" onclick="executarAnimacaoReels('${nomeLimpo}')">
+          ⚡ Criar Reels deste Produto
+        </button>
+        
+        <button style="width:100%; background-color:#10b981; color:white; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;" onclick="window.open('${prod.link}', '_blank')">
+          🟢 1 CLIQUE ZAP / COMPRAR
+        </button>
+      </div>
+    `;
+  });
+}
 
-            listaProdutos.innerHTML = ''; // Limpa o aviso de vazio
+// Lógica Inteligente de Transição de Abas com Feedback Visual de Progresso no Player 9:16
+function executarAnimacaoReels(nomeItem) {
+  // Alimenta os campos informativos na aba do estúdio MônicaIA
+  document.getElementById('target-product-name').innerText = nomeItem;
+  document.getElementById('txt-status-player').innerHTML = `<span style="color:#bc95ff; font-weight:bold;">MônicaIA<br>Iniciando Render...</span>`;
+  
+  const pContainer = document.getElementById('p-container');
+  const pFill = document.getElementById('p-fill');
+  
+  // Exibe a barra de carregamento e zera seu preenchimento
+  if (pContainer) pContainer.style.display = 'block';
+  if (pFill) pFill.style.width = '0%';
+  
+  // Executa a transição automática de aba por script
+  mudarAba('monica');
 
-            // Cria visualmente os cards de monitoramento na tela
-            produtos.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card-admin';
-                card.style.borderLeft = '4px solid #4ade80';
-                card.style.marginBottom = '15px';
-                
-                card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="font-size: 12px; font-weight: bold; color: #4ade80; uppercase">${prod.plataforma}</span>
-                        <span style="font-size: 11px; color: #64748b;">${new Date(prod.data_captura).toLocaleString('pt-BR')}</span>
-                    </div>
-                    <p style="font-size: 14px; color: #f1f5f9; margin-bottom: 12px; line-height: 1.4;">${prod.texto_bruto || 'Sem descrição'}</p>
-                    <a href="${prod.url_original}" target="_blank" style="display: inline-block; background-color: #334155; color: #4ade80; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; text-decoration: none;">🔗 Verificar Link Bruto</a>
-                `;
-                listaProdutos.appendChild(card);
-            });
-
-        } catch (err) {
-            listaProdutos.innerHTML = `<div class="card-vazio" style="color: #ef4444;">Erro ao carregar dados: ${err.message}</div>`;
-        }
+  let progresso = 0;
+  const intervalo = setInterval(() => {
+    progresso += 5;
+    if (pFill) pFill.style.width = `${progresso}%`;
+    
+    if (progresso >= 100) {
+      clearInterval(intervalo);
+      document.getElementById('txt-status-player').innerHTML = `<span style="color:#4ade80; font-weight:bold;">🎬 Vídeo 9:16<br>Pronto para Exportar!</span>`;
+      if (pContainer) pContainer.style.display = 'none';
     }
+  }, 100);
+}
 
-    // Carrega automaticamente ao abrir e ao clicar no botão com o mouse
-    btnCarregar.addEventListener('click', carregarFilaReal);
-    carregarFilaReal();
+// Inicializa a renderização assim que o script carregar completamente no navegador
+window.addEventListener('DOMContentLoaded', () => {
+  // Tenta ler o hash base64 gerado client-side se houver dados injetados
+  try {
+    const hash = window.location.hash;
+    if (hash && hash.includes('dados=')) {
+      const base64 = hash.split('dados=')[1];
+      dadosLoja = JSON.parse(atob(base64));
+      const lblNome = document.getElementById('lblNomeLoja');
+      if (lblNome) lblNome.innerText = dadosLoja.nome.toUpperCase();
+    }
+  } catch (e) { 
+    console.error("Aguardando entrada de hash client-side estruturado:", e); 
+  }
+  
+  renderizarCardsVitrine();
 });
