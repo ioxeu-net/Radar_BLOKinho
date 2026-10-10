@@ -1,351 +1,230 @@
-/* Paleta de Cores Premium - Dark / Orange & Gold */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ==========================================================================
+   PART 1: CONFIGURAÇÕES BASE, TEMA ORIGINAL E TEMA HARDROCK
+   ========================================================================== */
 
+/* --------------------------------------------------------------------------
+   0. CONFIGURAÇÕES PADRÃO DO PROGRAMA
+   -------------------------------------------------------------------------- */
 body {
-  background-color: #09090b;
-  color: #f4f4f5;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  min-height: 100vh;
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s; /* Transição suave ao trocar */
+}
+.conteudo-principal {
+    display: grid;
+    grid-template-columns: 280px 1fr 300px;
+    gap: 20px; padding: 20px;
+}
+.bloco-painel { overflow: hidden; }
+
+/* --------------------------------------------------------------------------
+   1. TEMA BASE: O ROXÃO ORIGINAL (Padrão do Social Br)
+   -------------------------------------------------------------------------- */
+body, body.tema-original {
+    background-color: #1F1625; color: #FFFFFF;
+}
+.tema-original header {
+    background-color: #3D1B54; border-bottom: 2px solid #5C2A7D;
+}
+.tema-original .bloco-painel {
+    background-color: #2A1B35; border: 1px solid #4A2665; border-radius: 8px;
+}
+.tema-original .titulo-bloco {
+    background-color: #3D1B54; color: #E0B0FF;
+}
+.tema-original .btn-principal {
+    background-color: #7D3C98; color: #FFFFFF; border: none;
 }
 
-/* CONTAINER MASTER DO LAYOUT EM ABAS/COLUNAS */
-.layout-banca-master {
-  display: flex;
-  min-height: 100vh;
+/* --------------------------------------------------------------------------
+   2. TEMA 1: HARDROCK 🎸 (Estilo Noturno com Bordas Iluminadas)
+   -------------------------------------------------------------------------- */
+body.tema-hardrock {
+    background-color: #121212 !important; color: #FFFFFF !important;
+    font-family: 'Trebuchet MS', sans-serif;
+}
+.tema-hardrock header {
+    background-color: #2B064D !important; border-bottom: 2px solid #4C007D !important;
+}
+.tema-hardrock .bloco-painel {
+    background-color: #000000 !important; border: 1px solid #4C007D !important; border-radius: 8px;
+}
+.tema-hardrock .titulo-bloco {
+    background-color: #2B064D !important; color: #FFD700 !important;
+}
+.tema-hardrock .btn-principal {
+    background: linear-gradient(135deg, #4C007D, #2B064D) !important;
+    border: 1px solid #FFD700 !important; color: #FFFFFF !important;
+}
+/* ==========================================================================
+   PART 2: TEMA PRIMAVERIL E TEMA SUAVE ROMÂNTICO ORIENTAL
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   3. TEMA 2: PRIMAVERIL 🌸 (Rosa Imperial e Detalhes Verde-Jardim)
+   -------------------------------------------------------------------------- */
+body.tema-primaveril {
+    background-color: #FDF6F8 !important; color: #2C1A20 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.tema-primaveril header {
+    background-color: #E91E63 !important; border-bottom: 3px solid #76D7C4 !important;
+}
+.tema-primaveril .bloco-painel {
+    background-color: #FFFFFF !important; border: 1px solid #F5B7B1 !important; border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(233,30,99,0.05);
+}
+.tema-primaveril .titulo-bloco {
+    background-color: #FADBD8 !important; color: #78281F !important; font-weight: bold;
+    border-bottom: 1px solid #F5B7B1 !important;
+}
+.tema-primaveril .sub-aba.ativa {
+    background-color: #76D7C4 !important; color: #FFFFFF !important;
+}
+.tema-primaveril .btn-principal {
+    background: linear-gradient(135deg, #76D7C4, #117864) !important;
+    border: none !important; color: #FFFFFF !important; font-weight: bold;
 }
 
-/* 🎛️ RETAGUARDA ESQUERDA: MENU LATERAL FIXO (COMPUTADOR) */
-.sidebar-comunidades {
-  width: 260px;
-  background-color: #141417;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 24px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  position: fixed;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  zIndex: 999;
-  transition: transform 0.3s ease;
+/* --------------------------------------------------------------------------
+   4. TEMA 3: SUAVE ROMÂNTICO ORIENTAL 🌅 (Pôr do Sol e Traços de Pincel)
+   -------------------------------------------------------------------------- */
+body.tema-romantico {
+    background: linear-gradient(180deg, #FFF2E6 0%, #FFE6EE 100%) !important;
+    background-attachment: fixed !important; color: #4A353B !important;
+}
+.tema-romantico header {
+    background-color: #FFB3A7 !important; border-bottom: 3px solid #E07A5F !important;
+}
+.tema-romantico .bloco-painel {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-top: 3px solid #2C2C2C !important; border-bottom: 4px solid #4A4A4A !important;
+    border-left: 1px solid #666666 !important; border-right: 2px solid #333333 !important;
+    border-radius: 12px 4px 15px 6px !important; /* Desalinhamento da caligrafia */
+}
+.tema-romantico .titulo-bloco {
+    background-color: #FFE6EE !important; color: #6B2D1C !important;
+    font-family: 'Georgia', serif; border-bottom: 2px solid #E07A5F !important;
+}
+.tema-romantico .sub-aba.ativa {
+    background-color: #E07A5F !important; color: #FFFFFF !important; border-radius: 20px;
+}
+.tema-romantico .btn-principal {
+    background: linear-gradient(135deg, #E07A5F, #C35A3E) !important;
+    border: none !important; color: #FFFFFF !important; border-radius: 20px !important;
+}
+/* ==========================================================================
+   PART 3: TEMA DARKZOMBIE E TEMA RETRO ANOS 50 (NACIONAL)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   5. TEMA 4: DARKZOMBIE 🧟 (Terror, Seringas e Mãozinha de Zumbi)
+   -------------------------------------------------------------------------- */
+body.tema-darkzombie {
+    background-color: #111311 !important; color: #FFFFFF !important;
+    font-family: 'Arial', sans-serif;
+    cursor: url('https://icons8.com'), auto !important;
+}
+.tema-darkzombie a, .tema-darkzombie button, .tema-darkzombie .cartao-tema {
+    cursor: url('https://icons8.com'), pointer !important;
+}
+.tema-darkzombie header {
+    background-color: #0A150D !important; border-bottom: 3px solid #FF1744 !important;
+}
+.tema-darkzombie .bloco-painel {
+    background-color: #000000 !important; border: 2px solid #2E3B2E !important; border-radius: 6px !important;
+}
+.tema-darkzombie .titulo-bloco {
+    background-color: #141F16 !important; color: #39FF14 !important;
+    font-family: 'Impact', sans-serif; border-bottom: 2px solid #2E3B2E !important;
+}
+.tema-darkzombie .sub-aba.ativa {
+    background-color: #990000 !important; color: #FFFFFF !important;
+}
+.tema-darkzombie .btn-principal {
+    background: linear-gradient(135deg, #D50000, #990000) !important;
+    border: 1px solid #FF1744 !important; color: #FFFFFF !important;
+    font-family: 'Impact', sans-serif;
 }
 
-.sidebar-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 15px;
+/* --------------------------------------------------------------------------
+   6. TEMA 5: RETRO ANOS 50 📻 (Anos Dourados, Verde-Menta e Ouro)
+   -------------------------------------------------------------------------- */
+body.tema-anos50 {
+    background-color: #F7F4EB !important; color: #2F3E3A !important;
+    font-family: 'Georgia', serif;
+}
+.tema-anos50 header {
+    background-color: #A2D2C8 !important; border-bottom: 5px solid #FFD700 !important;
+}
+.tema-anos50 .bloco-painel {
+    background-color: #FFFDF9 !important; border: 6px ridge #B8860B !important;
+    border-radius: 0px !important; box-shadow: 4px 4px 0px rgba(0,0,0,0.15) !important;
+}
+.tema-anos50 .titulo-bloco {
+    background-color: #A2D2C8 !important; color: #2F3E3A !important;
+    font-family: 'Times New Roman', serif; border-bottom: 3px double #B8860B !important;
+}
+.tema-anos50 .sub-aba.ativa {
+    background-color: #FFD700 !important; color: #2F3E3A !important;
+}
+.tema-anos50 .btn-principal {
+    background-color: #FFD700 !important; border: 2px solid #2F3E3A !important;
+    color: #2F3E3A !important; font-family: 'Times New Roman', serif;
+}
+/* ==========================================================================
+   PART 4: TEMA RETRO ANOS 60 E TEMA TEXAS COWBOY/SERTANEJO
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   7. TEMA 6: RETRO ANOS 60 🪩 (Jovem Guarda, Curvas Pop Art e Pastilhas)
+   -------------------------------------------------------------------------- */
+body.tema-anos60 {
+    background-color: #FAF5EF !important; color: #3E2723 !important;
+    font-family: 'Trebuchet MS', sans-serif;
+}
+.tema-anos60 header {
+    background-color: #E67E22 !important; border-bottom: 5px solid #F1C40F !important;
+}
+.tema-anos60 .bloco-painel {
+    background-color: #FFFFFF !important; border: 4px solid #3E2723 !important;
+    border-radius: 25px !important; box-shadow: 5px 5px 0px #F1C40F !important;
+}
+.tema-anos60 .titulo-bloco {
+    background-color: #F1C40F !important; color: #3E2723 !important;
+    font-family: 'Impact', sans-serif; border-bottom: 4px solid #3E2723 !important;
+}
+.tema-anos60 .sub-aba.ativa {
+    background-color: #E67E22 !important; color: #FFFFFF !important;
+}
+.tema-anos60 .btn-principal {
+    background: linear-gradient(135deg, #E67E22, #D35400) !important;
+    border: 3px solid #3E2723 !important; color: #FFFFFF !important;
+    border-radius: 25px !important; font-family: 'Impact', sans-serif;
 }
 
-.logo-socialbr {
-  font-size: 26px;
-  color: #ea580c; /* Laranja de Destaque */
+/* --------------------------------------------------------------------------
+   8. TEMA 7: TEXAS COWBOY / SERTANEJO 🤠 (Bruto, Rústico e Camurça)
+   -------------------------------------------------------------------------- */
+body.tema-sertanejo {
+    background-color: #EED9B3 !important; color: #362217 !important;
+    font-family: 'Georgia', serif;
 }
-.logo-socialbr i {
-  color: #eab308; /* Amarelo Ouro ML */
-  font-style: normal;
+.tema-sertanejo header {
+    background-color: #4E3629 !important; border-bottom: 4px solid #B85A32 !important;
 }
-
-.sub-logo {
-  font-size: 11px;
-  color: #71717a;
-  margin-top: 2px;
-  letter-spacing: 0.5px;
+.tema-sertanejo .bloco-painel {
+    background-color: #FFFDF9 !important; border: 4px solid #4E3629 !important;
+    border-radius: 6px !important; box-shadow: 4px 4px 0px rgba(78,54,41,0.2) !important;
 }
-
-.lista-grupos-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.tema-sertanejo .titulo-bloco {
+    background-color: #4E3629 !important; color: #FFF2D7 !important;
+    font-family: 'Impact', sans-serif; border-bottom: 2px solid #B85A32 !important;
 }
-
-.grupo-item-btn {
-  width: 100%;
-  background: none;
-  border: 1px solid transparent;
-  color: #a1a1aa;
-  padding: 12px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: left;
-  transition: all 0.2s ease;
+.tema-sertanejo .sub-aba.ativa {
+    background-color: #B85A32 !important; color: #FFFFFF !important;
 }
-
-.grupo-item-btn:hover, .grupo-item-btn.active {
-  background-color: #27272a;
-  color: #ea580c;
-  border-color: rgba(234, 88, 12, 0.2);
-}
-
-/* 🛍️ MIOLO CENTRAL: O FEED DA LANDING PAGE */
-.conteudo-principal-feed {
-  flex: 1;
-  margin-left: 260px; /* Dá espaço para a barra lateral fixa */
-  padding: 24px;
-  max-width: 600px; /* Mantém o feed centralizado e elegante */
-  margin-right: auto;
-}
-
-/* ☰ BOTÃO DO MENU HAMBÚRGUER (OCULTO NO PC, VISÍVEL NO CELULAR) */
-.menu-toggle-btn {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  zIndex: 99999;
-  background-color: #ea580c;
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 30px;
-  font-weight: bold;
-  font-size: 13px;
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
-  cursor: pointer;
-}
-
-/* 📰 CARROSSEL DE REVISTAS INFINITO */
-.banner-revistas-container {
-  width: 100%;
-  overflow: hidden;
-  background: linear-gradient(90deg, #141417 0%, #1e1b4b 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px 0;
-  margin-bottom: 25px;
-}
-
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: rolagemInfinita 25s linear infinite;
-}
-
-.banner-revistas-container:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-.revista-item {
-  color: #eab308;
-  font-weight: 800;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 0 20px;
-  cursor: pointer;
-}
-
-.revista-item:hover {
-  color: #ea580c;
-}
-
-@keyframes rolagemInfinita {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* HERO / ABERTURA COMERCIAL */
-.hero-comercial-topo {
-  margin-bottom: 25px;
-}
-
-.status-badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: bold;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  padding: 4px 10px;
-  border-radius: 20px;
-  margin-bottom: 10px;
-  letter-spacing: 1px;
-}
-
-.chamada-principal {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-  color: #f4f4f5;
-  margin-bottom: 8px;
-}
-
-.sub-chamada {
-  font-size: 13px;
-  color: #71717a;
-  line-height: 1.5;
-}
-
-/* BLOCOS DE CONTEÚDO DA LANDING */
-.secao-container-bloco {
-  background-color: #141417;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 16px;
-}
-
-.titulo-secao-premium {
-  font-size: 14px;
-  font-weight: 800;
-  color: #ea580c;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-
-/* 📻 MOLDURA RETRÔ CLASSIC VINTAGE ANOS 50/60 */
-.moldura-retro-cartaz {
-  width: 100%;
-  background-color: #f2ebd9;
-  border: 5px double #3b2d20;
-  padding: 20px;
-  color: #3b2d20;
-  font-family: "Georgia", serif;
-  text-align: center;
-  box-shadow: 4px 4px 0px #ea580c;
-  margin-top: 10px;
-}
-
-.badge-vintage-promo {
-  background: #c2410c;
-  color: #f2ebd9;
-  font-weight: bold;
-  font-size: 9px;
-  padding: 2px 6px;
-  text-transform: uppercase;
-  display: inline-block;
-  margin-bottom: 6px;
-}
-
-.linha-divisora-retro {
-  width: 40px;
-  height: 2px;
-  background-color: #3b2d20;
-  margin: 10px auto;
-}
-
-.retro-tag-preco {
-  font-size: 15px;
-  font-weight: bold;
-  margin-top: 12px;
-  color: #c2410c;
-}
-
-/* ⚡ CARROSSEL QUADRADO AUTOMÁTICO DE 4 VAGAS */
-.carrossel-quadrado-lote {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.vaga-anuncio-box {
-  background-color: #09090b;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 140px;
-}
-
-.btn-comprar-vaga {
-  width: 100%;
-  background-color: #10b981;
-  color: white;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 11px;
-  cursor: pointer;
-  text-transform: uppercase;
-  margin-top: 8px;
-}
-
-/* 💬 CARD E MURAL DE MENSAGENS DO SOCIALBR */
-.card-mural-post {
-  background-color: #09090b;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 15px;
-}
-
-.card-mural-post textarea {
-  width: 100%;
-  min-height: 60px;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 13px;
-  resize: vertical;
-  outline: none;
-}
-
-.btn-postar-mural {
-  background-color: #ea580c;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.lista-recados-mural {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.balao-mensagem-membro {
-  background-color: #09090b;
-  border-radius: 8px;
-  padding: 10px;
-  border-left: 3px solid #ea580c;
-}
-
-.rodape-banca-final {
-  text-align: center;
-  font-size: 9px;
-  letter-spacing: 1px;
-  color: #71717a;
-  margin-top: 40px;
-  text-transform: uppercase;
-}
-
-/* 📱 REGRAS DE ADAPTAÇÃO EXCLUSIVAS PARA CELULAR (RESPONSIVO) */
-@media (max-width: 768px) {
-  .menu-toggle-btn {
-    display: block; /* Revela o botão hambúrguer no celular */
-  }
-  
-  .sidebar-comunidades {
-    transform: translateX(-100%); /* Esconde a barra lateral para fora da tela */
-  }
-  
-  .sidebar-comunidades.open {
-    transform: translateX(0); /* Desliza para dentro quando ativada */
-  }
-  
-  .conteudo-principal-feed {
-    margin-left: 0; /* Remove o recuo lateral no celular */
-    padding: 16px;
-  }
-  
-  .carrossel-quadrado-lote {
-    grid-template-columns: 1fr; /* Transforma as 4 vagas em 1 coluna única no celular */
-  }
+.tema-sertanejo .btn-principal {
+    background-color: #B85A32 !important; border: 2px solid #4E3629 !important;
+    color: #FFFFFF !important; font-family: 'Impact', sans-serif;
 }
