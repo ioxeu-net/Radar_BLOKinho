@@ -228,3 +228,62 @@ body.tema-sertanejo {
     background-color: #B85A32 !important; border: 2px solid #4E3629 !important;
     color: #FFFFFF !important; font-family: 'Impact', sans-serif;
 }
+/* ==========================================================================
+   AUTOMAÇÃO DE TROCA DE APARÊNCIA - 8 TEMAS OFICIAIS
+   ========================================================================== */
+
+// 1. Lista com todos os nomes das roupas (classes) do nosso catálogo
+const todosOsTemas = [
+    'tema-original', 
+    'tema-hardrock', 
+    'tema-primaveril', 
+    'tema-romantico', 
+    'tema-darkzombie', 
+    'tema-anos50', 
+    'tema-anos60', 
+    'tema-sertanejo'
+];
+
+// 2. Função inteligente que limpa o tema antigo e veste o novo
+function aplicarNovoTema(nomeDoTema) {
+    // Remove todas as roupas antigas de uma vez só
+    document.body.classList.remove(...todosOsTemas);
+    
+    // Veste a nova roupa escolhida pelo usuário
+    if (nomeDoTema !== 'tema-original') {
+        document.body.classList.add(nomeDoTema);
+    }
+    
+    // Salva a escolha no navegador para o usuário não perder o tema ao atualizar
+    localStorage.setItem('socialbr-tema-salvo', nomeDoTema);
+}
+
+// 3. Deixa o sistema ouvindo os cliques do mouse em cada cartão
+document.addEventListener('DOMContentLoaded', () => {
+    // Tenta carregar o último tema que o usuário deixou salvo ao abrir a página
+    const temaSalvo = localStorage.getItem('socialbr-tema-salvo');
+    if (temaSalvo) {
+        aplicarNovoTema(temaSalvo);
+    }
+
+    // Mapeia os cliques do mouse nos botões do catálogo real
+    configurarCliqueTema('.btn-tema-original', 'tema-original');
+    configurarCliqueTema('.btn-tema-hardrock', 'tema-hardrock');
+    configurarCliqueTema('.btn-tema-primaveril', 'tema-primaveril');
+    configurarCliqueTema('.btn-tema-romantico', 'tema-romantico');
+    configurarCliqueTema('.btn-tema-darkzombie', 'tema-darkzombie');
+    configurarCliqueTema('.btn-tema-anos50', 'tema-anos50');
+    configurarCliqueTema('.btn-tema-anos60', 'tema-anos60');
+    configurarCliqueTema('.btn-tema-sertanejo', 'tema-sertanejo');
+});
+
+// Função auxiliar simples para ligar o clique do botão à troca de roupa
+function configurarCliqueTema(botaoClasse, classeTema) {
+    const botao = document.querySelector(botaoClasse);
+    if (botao) {
+        botao.addEventListener('click', (evento) => {
+            evento.preventDefault();
+            aplicarNovoTema(classeTema);
+        });
+    }
+}
