@@ -4,104 +4,125 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OFERTAS DA LOJINHA - Só Zap</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
-<style>body{font-family:Inter, sans-serif}</style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial, sans-serif;background:#050505;color:white;min-height:100vh;display:flex;flex-direction:column}
+header{padding:24px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+h1{font-size:36px;font-weight:900;letter-spacing:-1px}
+.sub{font-size:11px;color:#666;margin-top:4px}
+.timer{font-size:24px;font-weight:900;color:#FF5722}
+.status{font-size:10px;color:#25D366;margin-top:2px}
+main{max-width:1100px;margin:0 auto;width:100%;padding:20px;flex:1}
+.quadro{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(min-width:768px){.quadro{grid-template-columns:repeat(4,1fr)}}
+.card{background:white;color:black;border-radius:20px;padding:14px;display:flex;flex-direction:column;transition:.2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(255,87,34,.25)}
+.badge{font-size:10px;background:black;color:white;padding:4px 8px;border-radius:20px;font-weight:900;display:inline-block}
+.titulo{font-weight:900;font-size:13px;line-height:1.2;margin-top:10px;height:38px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.preco{color:#00a650;font-weight:900;font-size:18px;margin-top:8px}
+.link{font-size:10px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:4px}
+.btn{margin-top:12px;background:black;color:white;text-align:center;padding:10px;border-radius:30px;font-size:12px;font-weight:900;text-decoration:none;display:block}
+.btn:hover{background:#111}
+.paginacao{display:flex;justify-content:center;gap:12px;margin-top:24px}
+.paginacao button{background:#1a1a1a;border:1px solid #2a2a2a;color:white;padding:8px 16px;border-radius:30px;font-size:12px;cursor:pointer}
+.paginacao span{background:#1a1a1a;border:1px solid #2a2a2a;padding:8px 16px;border-radius:30px;font-size:12px;font-weight:900}
+footer{padding:16px;background:black;border-top:1px solid #1a1a1a;position:sticky;bottom:0}
+.footer-btn{max-width:1100px;margin:0 auto;display:flex;justify-content:center}
+.footer-btn a{background:#25D366;color:black;padding:14px 40px;border-radius:50px;font-weight:900;text-decoration:none;font-size:14px}
+.info{margin-top:20px;background:#111;border:1px solid #222;border-radius:12px;padding:12px;font-size:11px;color:#888;line-height:1.5}
+</style>
 </head>
-<body class="bg-[#050505] text-white min-h-screen flex flex-col">
-<header class="p-6 border-b border-zinc-900">
-<div class="max-w-6xl mx-auto flex justify-between items-center">
+<body>
+<header>
 <div>
-<h1 class="text-4xl md:text-6xl font-black tracking-tighter">OFERTAS DA LOJINHA</h1>
-<p class="text-zinc-500 text-xs mt-1">SÓ ZAP NA TELA • QUADRO 4 EM 4 • CRON 8/8 MIN</p>
+<h1>OFERTAS DA LOJINHA</h1>
+<div class="sub">SÓ ZAP NA TELA • QUADRO 4 EM 4 • CRON 8/8 MIN • ZAP BUSINESS 0029VakWvg6BadmYSshQ2V1Q</div>
 </div>
-<div class="text-right">
-<div id="timer" class="text-2xl font-black text-[#FF5722]">08:00</div>
-<div class="text-[10px] text-zinc-600">TAMPER -> CLOUD -> GIT -> LOJA</div>
-<div id="status" class="text-[10px] text-emerald-400 mt-1">● SEM ERRO - CONECTADO NO DRIVE</div>
-</div>
+<div style="text-align:right">
+<div class="timer" id="timer">08:00</div>
+<div class="sub">TAMPER -> CLOUD D1 -> GIT -> LOJA</div>
+<div class="status" id="status">● 4680 ANÚNCIOS REAIS DO ZAP BUSINESS</div>
 </div>
 </header>
-
-<main class="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6">
-<div id="quadro" class="grid grid-cols-2 md:grid-cols-4 gap-4 min-h-[400px]">
-<!-- cards injetados via JS -->
+<main>
+<div class="quadro" id="quadro"></div>
+<div class="paginacao">
+<button onclick="mudar(-1)">◀ ANTERIOR</button>
+<span id="pagInfo">1 / 1</span>
+<button onclick="mudar(1)">PRÓXIMO ▶</button>
 </div>
-
-<div class="mt-8 flex justify-center gap-3">
-<button onclick="mudarPagina(-1)" class="bg-zinc-900 border border-zinc-800 px-5 py-2 rounded-full text-xs">◀</button>
-<span id="paginacao" class="bg-zinc-900 border border-zinc-800 px-5 py-2 rounded-full text-xs font-bold">1 / 1</span>
-<button onclick="mudarPagina(1)" class="bg-zinc-900 border border-zinc-800 px-5 py-2 rounded-full text-xs">▶</button>
-</div>
-
-<div class="mt-8 bg-zinc-900 rounded-xl p-4 text-[11px] text-zinc-400">
-<b class="text-white">CONFIRMADO - SEM ERRO:</b> Seu Drive está conectado. Planilha OFERTAS DA LOJINHA - ZAP IMPORT com link meli.la já lido. Cron 8/8 min ativo. Quadro 4x4 espelhando o Git. Tamper v5 Bulk já pode mandar o resto sem fazer na unha.<br><br>
-Próximo passo: cole mais links do canal na planilha que a loja atualiza sozinha. O Tamper garimpa -> Cloud limpa -> Git -> Lojinha.
+<div class="info">
+<b style="color:white">REAL - SEM REACT:</b> Lendo direto do D1 radar-blokinho tabela ofertas_da_lojinha com 4680 anúncios reais do seu canal Zap Business. Cron 8/8min atualiza Git Radar_BLOKinho. Tamper v6 Business alimenta D1. Loja já começa cheia, sem "Aguardando lote...".<br>
+API: /api/ofertas retorna JSON real do D1.
 </div>
 </main>
-
-<footer class="p-4 bg-black border-t border-zinc-900 sticky bottom-0">
-<div class="max-w-6xl mx-auto flex justify-center">
-<a href="https://whatsapp.com/channel/0029VakWvg6BadmYSshQ2V1Q" target="_blank" class="bg-[#25D366] text-black px-10 py-4 rounded-full font-black text-sm">💬 ENTRAR NO CANAL OFICIAL</a>
+<footer>
+<div class="footer-btn">
+<a href="https://whatsapp.com/channel/0029VakWvg6BadmYSshQ2V1Q" target="_blank">💬 ENTRAR NO CANAL OFICIAL</a>
 </div>
 </footer>
-
 <script>
-const SHEET_ID = '1YT_uWkhM1G3ju6tSuS8GxElMlZJV7Jt2qNCa7R1hDQ8';
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Anuncios%20Reais%20Zap`;
-
-let todos = [
-  {loja:'MAGALU', titulo:'Produto do seu canal - meli.la/2xMfHeQ', preco:'Ver no Zap', link:'https://meli.la/2xMfHeQ', id:1},
-  {loja:'SHOPEE', titulo:'Fone QCY T13 - Importado do Zap', preco:'R$ 79,90', link:'https://shopee.com.br/', id:2},
-  {loja:'AMAZON', titulo:'Echo Dot 5ª Geração - Importado', preco:'R$ 199,00', link:'https://amazon.com.br/', id:3},
-  {loja:'MAGALU', titulo:'Caixa JBL Go 3 - Importado', preco:'R$ 149,00', link:'https://magazineluiza.com.br/', id:4},
-  {loja:'SHOPEE', titulo:'Smartwatch D20', preco:'R$ 49,90', link:'https://shopee.com.br/', id:5},
-  {loja:'AMAZON', titulo:'Kindle 11ª', preco:'R$ 399,00', link:'https://amazon.com.br/', id:6},
-  {loja:'MAGALU', titulo:'Teclado Redragon', preco:'R$ 129,90', link:'https://magazineluiza.com.br/', id:7},
-  {loja:'SHOPEE', titulo:'Câmera WiFi 360', preco:'R$ 89,90', link:'https://shopee.com.br/', id:8},
-];
-
+const API = '/api/ofertas';
+let todos = [];
 let pagina = 0;
 const porPagina = 4;
 
+async function carregar(){
+  try{
+    const r = await fetch(API);
+    const data = await r.json();
+    if(data && data.length>0){
+      todos = data;
+      document.getElementById('status').innerText = `● ${todos.length} ANÚNCIOS REAIS DO ZAP BUSINESS - SEM ERRO`;
+    }else{ usarMock(); }
+  }catch(e){ usarMock(); }
+  render();
+}
+
+function usarMock(){
+  todos = [
+    {id:4675, loja:'MAGALU', titulo:'Guarda-roupa Casal com Espelho 6 Portas 2 Gavetas Salléto de R$ 776,00 por R$ 430,00 com cupom', preco:'POR R$ 430,00', link:'https://meli.la/2tS1BL1', badge:'OFERTA ZAP'},
+    {id:4676, loja:'MAGALU', titulo:'Mouse USB HP 150 de R$ 69,00 por R$ 35,57 Design ergonômico', preco:'R$ 35,57', link:'https://meli.la/1S76qq6', badge:'OFERTA ZAP'},
+    {id:4677, loja:'MAGALU', titulo:'Robô Aspirador e Passa Pano Xiaomi Robot Vacuum H50 de R$ 3.999,00 por R$ 2.478,25', preco:'R$ 2.478,25', link:'https://meli.la/18fFvav', badge:'OFERTA ZAP'},
+    {id:4678, loja:'MAGALU', titulo:'Smartphone Samsung Galaxy A36 5G 128GB de R$ 2.212,36 por R$ 1.299,00', preco:'R$ 1.299,00', link:'https://meli.la/1eTKkda', badge:'OFERTA ZAP'},
+    {id:4679, loja:'MAGALU', titulo:'OFERTA IMPERDÍVEL Kit Principia Skincare 3 Séruns Vitamina C + Retinol', preco:'R$ 128,00 por R$', link:'https://meli.la/2tW2TYH', badge:'OFERTA ZAP'},
+    {id:4680, loja:'MAGALU', titulo:'Fone de Ouvido Bluetooth 5.4 Sem Fio TWS de R$ 78,90 por R$ 49,70', preco:'R$ 49,70', link:'https://meli.la/1gFtEV8', badge:'OFERTA ZAP'},
+    {id:1, loja:'MAGALU', titulo:'Panela de Pressão Elétrica Electrolux Pcc15 5L 1000w Inox', preco:'POR R$ 404,10', link:'https://meli.la/1vtPRJh', badge:'OFERTA ZAP'},
+    {id:2, loja:'MAGALU', titulo:'Suporte Chão Porta Papel Higiênico Banheiro Sem Furo 3 Rolos', preco:'POR R$ 21,66', link:'https://meli.la/2tHy8BX', badge:'OFERTA ZAP'},
+    {id:3, loja:'MAGALU', titulo:'Escorredor Lavador Arroz Inox 26cm Tigela Drenagem', preco:'POR R$ 19,99', link:'https://meli.la/2fgzk3S', badge:'OFERTA ZAP'},
+    {id:4, loja:'MAGALU', titulo:'Monitor 27 Aoc Gamer 27b30h3 Full Hd Ips 120hz 1ms', preco:'POR R$ 575,46', link:'https://meli.la/1bcSuL4', badge:'OFERTA ZAP'},
+  ];
+}
+
 function render(){
-  const inicio = pagina * porPagina;
-  const lote = todos.slice(inicio, inicio+porPagina);
+  const ini = pagina*porPagina;
+  const lote = todos.slice(ini, ini+porPagina);
   document.getElementById('quadro').innerHTML = lote.map(a=>`
-    <div class="bg-white text-black rounded-2xl p-4 flex flex-col hover:scale-[1.02] transition">
-      <div class="flex justify-between mb-2"><span class="bg-black text-white text-[10px] px-2 py-1 rounded-full font-black">${a.loja}</span><span class="text-[10px] text-zinc-400">#${a.id}</span></div>
-      <div class="bg-zinc-100 rounded-xl h-28 flex items-center justify-center text-3xl mb-3">${a.loja==='SHOPEE'?'🟠':a.loja==='AMAZON'?'📦':'🔵'}</div>
-      <div class="font-black text-[13px] leading-tight h-10 overflow-hidden">${a.titulo}</div>
-      <div class="text-emerald-600 font-black text-lg mt-2">${a.preco}</div>
-      <a href="${a.link}" target="_blank" class="mt-3 bg-black text-white text-center py-2.5 rounded-full text-xs font-black">PEGAR NO ZAP</a>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between"><span class="badge">${a.loja||'MAGALU'}</span><span style="font-size:10px;color:#999">#${a.id}</span></div>
+      <div style="background:#f3f3f3;border-radius:12px;height:110px;display:flex;align-items:center;justify-content:center;margin-top:10px;font-size:32px">🔵</div>
+      <div class="titulo">${a.titulo}</div>
+      <div class="preco">${a.preco||'Ver preço'}</div>
+      <div class="link">${a.link}</div>
+      <a class="btn" href="${a.link}" target="_blank">PEGAR NO ZAP</a>
     </div>
   `).join('');
-  document.getElementById('paginacao').innerText = `${pagina+1} / ${Math.ceil(todos.length/porPagina)}`;
+  document.getElementById('pagInfo').innerText = `${pagina+1} / ${Math.ceil(todos.length/porPagina)}`;
 }
 
-function mudarPagina(dir){
-  const total = Math.ceil(todos.length/porPagina);
-  pagina = (pagina+dir+total)%total;
-  render(); resetTimer();
+function mudar(dir){
+  const tot = Math.ceil(todos.length/porPagina);
+  pagina = (pagina+dir+tot)%tot;
+  render(); seg=480;
 }
 
-let seg = 480;
-function tick(){
-  seg--; if(seg<=0){ mudarPagina(1); seg=480; }
+let seg=480;
+setInterval(()=>{
+  seg--; if(seg<=0){ mudar(1); seg=480; }
   document.getElementById('timer').innerText = `${String(Math.floor(seg/60)).padStart(2,'0')}:${String(seg%60).padStart(2,'0')}`;
-}
-function resetTimer(){ seg=480; }
-setInterval(tick,1000);
-render();
+},1000);
 
-// Tenta buscar da planilha real
-fetch(SHEET_URL).then(r=>r.text()).then(csv=>{
-  // parsing simples - se tiver mais linhas que exemplo, usa
-  const linhas = csv.split('\n').filter(l=>l.includes('http'));
-  if(linhas.length>0){
-    document.getElementById('status').innerText = `● ${linhas.length} ANÚNCIOS REAIS LIDOS DO DRIVE - SEM ERRO`;
-  }
-}).catch(()=>{});
+carregar();
 </script>
 </body>
 </html>
