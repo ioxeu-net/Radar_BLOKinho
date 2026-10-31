@@ -1,64 +1,75 @@
-export async function onRequest(context) {
-  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
+/* 
+============================================================
+   ARQUIVO: functions/api/achadinhos.js
+   FUNÇÃO: Receber dados do Robô e Salvar no Banco D1
+   VERSÃO: Limpa (Sem Telegram) - v3.9.0
+============================================================
+*/
+
+export async function onRequestPost(context) {
+  
+  // CABEÇALHO DE PERMISSÃO (CORS)
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
+  // SE FOR TESTE DE CONEXÃO, RESPONDE NA HORA
+  if (context.request.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
 
   try {
-    // ✅ UNIÃO DAS DUAS TABELAS: Pega ML e Achadinhos juntos, ordenados por data
-    const stmt = context.env.DB.prepare(`
-      SELECT id, 'mercado_livre' as plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM mercado_livre
-      UNION ALL
-      SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM achadinhos
-      ORDER BY data_captura DESC LIMIT 50
-    `);
     
-    const { results } = await stmt.all();
+    // >>> RECEBENDO OS DADOS DO ROBÔ <<<
+    const data = await context.request.json();
+    const { plataforma, url_original, texto_bruto, imagem_url } = data;
 
-    // Configuração das Lojas Oficiais
-    const LOJAS = {
-      shopee: "https://collshp.com/lojinhashopofertas?view=storefront",
-      mercado_livre: "https://meli.la/1T6tAuJ",
-      magazine_luiza: "https://www.magazinevoce.com.br/magazinehdmicroloja",
-      amazon_tag: "coloposte-20"
-    };
+    // VALIDAÇÃO BÁSICA DE SEGURANÇA
+    if (!plataforma || !url_original) {
+      return new Response(JSON.stringify({ erro: "Dados incompletos" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
 
-    const ofertas = results.map(item => {
-      let linkFinal = item.link;
-      let lojaNome = item.plataforma?.toUpperCase() || 'OFERTA';
+    // >>> SALVAMENTO AUTÔNOMO NO BANCO D1 <<<
+    
+    // 1. SE FOR MERCADO LIVRE: Salva na tabela exclusiva
+    if (plataforma === "mercado_livre") {
+      await context.env.DB.prepare(
+        "INSERT INTO mercado_livre (url_original, texto_bruto, imagem_url, data_captura) VALUES (?, ?, ?, ?)"
+      ).bind(url_original, texto_bruto, imagem_url || null, new Date().toISOString()).run();
+    } 
+    
+    // 2. SE FOR OUTRA PLATAFORMA: Salva na tabela geral
+    else {
+      await context.env.DB.prepare(
+        "INSERT INTO achadinhos (plataforma, url_original, texto_bruto, imagem_url, data_captura) VALUES (?, ?, ?, ?, ?)"
+      ).bind(plataforma, url_original, texto_bruto, imagem_url || null, new Date().toISOString()).run();
+    }
 
-      // Lógica de injeção de loja oficial
-      if (item.plataforma === 'shopee') {
-        const match = item.link.match(/i\.(\d+)\.(\d+)/);
-        linkFinal = match 
-          ? `https://collshp.com/lojinhashopofertas/i.${match[1]}.${match[2]}` 
-          : LOJAS.shopee;
-        lojaNome = 'SHOPEE';
-      } 
-      else if (item.plataforma === 'mercado_livre') {
-        linkFinal = LOJAS.mercado_livre;
-        lojaNome = 'MERCADO LIVRE';
-      }
-      else if (item.plataforma === 'magazine_luiza') {
-        linkFinal = LOJAS.magazine_luiza;
-        lojaNome = 'MAGALU';
-      }
-      else if (item.plataforma === 'amazon') {
-        linkFinal += (linkFinal.includes('?') ? '&' : '?') + `tag=${LOJAS.amazon_tag}`;
-        lojaNome = 'AMAZON';
-      }
-
-      return {
-        id: item.id,
-        loja: lojaNome,
-        titulo: (item.titulo || "Oferta").substring(0, 100),
-        link: linkFinal,
-        imagem: item.imagem_url || null, // ✅ IMAGEM AGORA VEM DO BANCO
-        preco: "Ver oferta"
-      };
+    // RESPOSTA DE SUCESSO PARA O ROBÔ
+    return new Response(JSON.stringify({ status: "sucesso", mensagem: "Oferta salva!" }), {
+      status: 201,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
 
-    return new Response(JSON.stringify(ofertas), { headers: corsHeaders });
-
   } catch (err) {
-    console.error("Erro ofertas:", err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+    
+    // TRATAMENTO DE ERRO SILÊNCIOSO
+    console.error("Erro ao salvar oferta:", err);
+    return new Response(JSON.stringify({ erro: "Falha interna" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
   }
+}
+
+// RESPOSTA PARA TESTES DE CONEXÃO
+export async function onRequestOptions() {
+  return new Response(null, {
+    headers: { "Access-Control-Allow-Origin": "*" }
+  });
 }
