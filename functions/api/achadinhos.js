@@ -1,79 +1,64 @@
-export async function onRequestPost(context) {
-  // Cabeçalhos CORS para permitir que o robô do WhatsApp Web envie os dados de fora
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
-  // Se receber um teste de conexão (OPTIONS), responde com sucesso na hora
-  if (context.request.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+export async function onRequest(context) {
+  const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' };
 
   try {
-    const data = await context.request.json();
-    const { plataforma, url_original, texto_bruto } = data;
+    // ✅ UNIÃO DAS DUAS TABELAS: Pega ML e Achadinhos juntos, ordenados por data
+    const stmt = context.env.DB.prepare(`
+      SELECT id, 'mercado_livre' as plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM mercado_livre
+      UNION ALL
+      SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM achadinhos
+      ORDER BY data_captura DESC LIMIT 50
+    `);
+    
+    const { results } = await stmt.all();
 
-    // Validação de segurança básica
-    if (!plataforma || !url_original) {
-      return new Response(JSON.stringify({ erro: "Campos obrigatórios ausentes" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
-    }
+    // Configuração das Lojas Oficiais
+    const LOJAS = {
+      shopee: "https://collshp.com/lojinhashopofertas?view=storefront",
+      mercado_livre: "https://meli.la/1T6tAuJ",
+      magazine_luiza: "https://www.magazinevoce.com.br/magazinehdmicroloja",
+      amazon_tag: "coloposte-20"
+    };
 
-    // DIVISÃO INTELIGENTE DE GAVETAS NO BANCO D1
-    if (plataforma === "mercado_livre") {
-      // Grava exclusivamente na tabela isolada do Mercado Livre
-      await context.env.DB.prepare(
-        "INSERT INTO mercado_livre (url_original, texto_bruto, data_captura) VALUES (?, ?, ?)"
-      ).bind(url_original, texto_bruto, new Date().toISOString()).run();
-    } else {
-      // Mantém o fluxo tradicional na tabela de achadinhos (Shopee, Amazon, Magalu)
-      await context.env.DB.prepare(
-        "INSERT INTO achadinhos (plataforma, url_original, texto_bruto, data_captura) VALUES (?, ?, ?, ?)"
-      ).bind(plataforma, url_original, texto_bruto, new Date().toISOString()).run();
-    }
+    const ofertas = results.map(item => {
+      let linkFinal = item.link;
+      let lojaNome = item.plataforma?.toUpperCase() || 'OFERTA';
 
-    // Se o Token do Telegram estiver ativo nas configurações do Cloudflare, faz o disparo
-    if (context.env.TELEGRAM_TOKEN && plataforma !== "mercado_livre") {
-      const mensagemTelegram = `🤖 *BLOKinho ACHEI ufaaa!!!* \n\n📝 ${texto_bruto || 'Confira esta oferta!'}\n\n🔗 *Link Promocional:* ${url_original}`;
-      const canalDestino = "@SEU_CANAL"; // Se for usar o Telegram depois, troque aqui pelo seu @
-      const telegramUrl = `https://telegram.org{context.env.TELEGRAM_TOKEN}/sendMessage`;
-      
-      context.waitUntil(
-        fetch(telegramUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            chat_id: canalDestino,
-            text: mensagemTelegram,
-            parse_mode: "Markdown"
-          })
-        })
-      );
-    }
+      // Lógica de injeção de loja oficial
+      if (item.plataforma === 'shopee') {
+        const match = item.link.match(/i\.(\d+)\.(\d+)/);
+        linkFinal = match 
+          ? `https://collshp.com/lojinhashopofertas/i.${match[1]}.${match[2]}` 
+          : LOJAS.shopee;
+        lojaNome = 'SHOPEE';
+      } 
+      else if (item.plataforma === 'mercado_livre') {
+        linkFinal = LOJAS.mercado_livre;
+        lojaNome = 'MERCADO LIVRE';
+      }
+      else if (item.plataforma === 'magazine_luiza') {
+        linkFinal = LOJAS.magazine_luiza;
+        lojaNome = 'MAGALU';
+      }
+      else if (item.plataforma === 'amazon') {
+        linkFinal += (linkFinal.includes('?') ? '&' : '?') + `tag=${LOJAS.amazon_tag}`;
+        lojaNome = 'AMAZON';
+      }
 
-    return new Response(JSON.stringify({ status: "sucesso", mensagem: "Gravado na tabela correspondente!" }), {
-      status: 201,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
+      return {
+        id: item.id,
+        loja: lojaNome,
+        titulo: (item.titulo || "Oferta").substring(0, 100),
+        link: linkFinal,
+        imagem: item.imagem_url || null, // ✅ IMAGEM AGORA VEM DO BANCO
+        preco: "Ver oferta"
+      };
     });
+
+    return new Response(JSON.stringify(ofertas), { headers: corsHeaders });
 
   } catch (err) {
-    return new Response(JSON.stringify({ erro: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
-    });
+    console.error("Erro ofertas:", err);
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
   }
-}
-
-export async function onRequestOptions() {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    }
-  });
 }
