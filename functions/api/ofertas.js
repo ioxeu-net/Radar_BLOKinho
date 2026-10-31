@@ -1,35 +1,38 @@
 export async function onRequest(context) {
-  const { env, request } = context;
-  
-  // Configuração de CORS para permitir acesso do frontend
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Content-Type': 'application/json',
+  const corsHeaders = { 
+    'Access-Control-Allow-Origin': '*', 
+    'Content-Type': 'application/json' 
   };
 
   try {
-    // Busca os últimos 50 itens ordenados por data (mais recentes primeiro)
-    const stmt = env.DB.prepare(
-      "SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url FROM achadinhos ORDER BY id DESC LIMIT 50"
-    );
+    // 🔒 CONFIGURAÇÃO DE SEGURANÇA DUPLA PARA ML
+    const ML_LINK_SEGURO = "https://lista.mercadolivre.com.br/_CustId_ML202408011903400660";
+    const ML_LINK_PRINCIPAL = "https://meli.la/1T6tAuJ";
     
-    const { results } = await stmt.all();
-
-    // Mapeamento das Lojas Oficiais para injeção direta no backend
+    // Usaremos o link seguro como padrão para garantir comissão
     const LOJAS_OFICIAIS = {
       shopee: "https://collshp.com/lojinhashopofertas?view=storefront",
-      mercado_livre: "https://meli.la/1T6tAuJ",
+      mercado_livre: ML_LINK_SEGURO, 
       magazine_luiza: "https://www.magazinevoce.com.br/magazinehdmicroloja",
       amazon_tag: "coloposte-20"
     };
+
+    // ✅ BUSCA UNIFICADA: Pega dados das duas tabelas (ML separada + Achadinhos gerais)
+    const stmt = context.env.DB.prepare(`
+      SELECT id, 'mercado_livre' as plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM mercado_livre
+      UNION ALL
+      SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM achadinhos
+      ORDER BY data_captura DESC LIMIT 60
+    `);
+    
+    const { results } = await stmt.all();
 
     const ofertasFormatadas = results.map(item => {
       let linkFinal = item.link;
       let lojaNome = item.plataforma?.toUpperCase() || 'OFERTA';
       
-      // Lógica de injeção de loja oficial (Backend)
+      // Lógica de injeção de loja oficial (Backend Seguro)
       if (item.plataforma === 'shopee') {
-        // Tenta extrair ID do produto para link direto na loja oficial
         const match = item.link.match(/i\.(\d+)\.(\d+)/);
         if (match) {
           linkFinal = `https://collshp.com/lojinhashopofertas/i.${match[1]}.${match[2]}`;
@@ -39,6 +42,7 @@ export async function onRequest(context) {
         lojaNome = 'SHOPEE';
       } 
       else if (item.plataforma === 'mercado_livre') {
+        // Força o uso do link seguro com seu CustId
         linkFinal = LOJAS_OFICIAIS.mercado_livre;
         lojaNome = 'MERCADO LIVRE';
       }
@@ -47,14 +51,13 @@ export async function onRequest(context) {
         lojaNome = 'MAGALU';
       }
       else if (item.plataforma === 'amazon') {
-        // Adiciona tag se não tiver
         if (!linkFinal.includes('tag=')) {
           linkFinal += (linkFinal.includes('?') ? '&' : '?') + `tag=${LOJAS_OFICIAIS.amazon_tag}`;
         }
         lojaNome = 'AMAZON';
       }
 
-      // Limpeza básica do título (remove emojis excessivos ou textos muito longos)
+      // Limpeza básica do título
       let tituloLimpo = item.titulo || "Oferta Imperdível";
       if (tituloLimpo.length > 100) tituloLimpo = tituloLimpo.substring(0, 97) + '...';
 
@@ -62,9 +65,9 @@ export async function onRequest(context) {
         id: item.id,
         loja: lojaNome,
         titulo: tituloLimpo,
-        link: linkFinal, // Link já processado com loja oficial
-        imagem: item.imagem_url || null, // Nova coluna de imagem
-        preco: "Ver oferta" // Placeholder, pois o D1 não costuma ter preço exato salvo
+        link: linkFinal,
+        imagem: item.imagem_url || null,
+        preco: "Ver oferta"
       };
     });
 
@@ -74,7 +77,7 @@ export async function onRequest(context) {
 
   } catch (err) {
     console.error("Erro ao buscar ofertas:", err);
-    return new Response(JSON.stringify({ error: "Erro interno" }), {
+    return new Response(JSON.stringify({ error: "Erro interno no servidor" }), {
       status: 500,
       headers: corsHeaders
     });
