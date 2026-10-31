@@ -259,6 +259,12 @@ body{
   position:relative;
   overflow:hidden;
 }
+.card-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:14px;
+}
 .card-img::before{content:'🔥';font-size:36px}
 .card-img-new::after{
   content:'DESTAQUE';
@@ -425,52 +431,141 @@ footer{
 </footer>
 
 <script>
+// === CONFIGURAÇÕES DAS LOJAS OFICIAIS ===
+const SHOPEE_LOJA_OFICIAL = "https://collshp.com/lojinhashopofertas?view=storefront";
+const MERCADOLIVRE_LOJA = "https://meli.la/1T6tAuJ";
+const MAGALU_BASE = "https://www.magazinevoce.com.br/magazinehdmicroloja";
+const AMAZON_ID = "coloposte-20";
+
 const API='/api/ofertas';
-let todos=[];let pagina=0;const porPagina=8;
+let todos=[];
+let pagina=0;
+const porPagina=8;
+
+// === FUNÇÃO LIMPADORA DE LINKS (INTEGRADA NO FRONTEND) ===
+function limparEInjetarLink(linkOriginal) {
+    try {
+        const url = new URL(linkOriginal);
+        const domain = url.hostname.toLowerCase();
+        const pathname = url.pathname;
+        
+        // SHOPEE: Redireciona para loja oficial
+        if (domain.includes('shopee.') || domain.includes('shp.ee') || domain.includes('shp')) {
+            let productId = '';
+            const productMatch = pathname.match(/i\.(\d+)\.(\d+)/);
+            if (productMatch) {
+                productId = `i.${productMatch[1]}.${productMatch[2]}`;
+            } else {
+                const itemIdMatch = pathname.match(/\.(\d{10,})/);
+                if (itemIdMatch) {
+                    productId = itemIdMatch[1];
+                }
+            }
+            if (productId) {
+                const baseUrl = SHOPEE_LOJA_OFICIAL.split('?')[0];
+                return `${baseUrl}/${productId}`;
+            }
+            return SHOPEE_LOJA_OFICIAL;
+        }
+        
+        // MERCADO LIVRE: Redireciona para loja oficial
+        if (domain.includes('mercadolivre.com') || domain.includes('mlb.io') || domain.includes('meli.la') || domain.includes('mercado')) {
+            return MERCADOLIVRE_LOJA;
+        }
+        
+        // AMAZON: Adiciona tag de afiliado
+        if (domain.includes('amazon.')) {
+            url.searchParams.set('tag', AMAZON_ID);
+            return url.toString();
+        }
+        
+        // MAGALU: Link base limpo
+        if (domain.includes('magazinevoce.com.br') || domain.includes('magalu')) {
+            return MAGALU_BASE;
+        }
+        
+        // Outros: link puro
+        url.search = '';
+        return url.toString();
+        
+    } catch (e) {
+        console.error("Erro ao limpar link:", e);
+        return linkOriginal;
+    }
+}
+
 async function carregar(){
- try{
-  const r=await fetch(API);const data=await r.json();
-  if(data&&data.length>0){todos=data;}else{usarMock();}
- }catch(e){usarMock();}
- render();
+    try{
+        const r=await fetch(API);
+        const data=await r.json();
+        if(data&&data.length>0){
+            // Aplica o limpador em todos os links recebidos
+            todos = data.map(item => ({
+                ...item,
+                link: limparEInjetarLink(item.link || item.url_original || '')
+            }));
+        } else {
+            usarMock();
+        }
+    } catch(e){
+        console.error("Erro ao carregar dados:", e);
+        usarMock();
+    }
+    render();
 }
+
 function usarMock(){
- todos=[
-  {id:4675,loja:'MAGALU',titulo:'Guarda-roupa Casal com Espelho 6 Portas 2 Gavetas Salléto de R$ 776 por R$ 430 com cupom',preco:'R$ 430,00',link:'https://meli.la/2tS1BL1'},
-  {id:4676,loja:'MAGALU',titulo:'Mouse USB HP 150 ergonômico R$ 69 por R$ 35,57',preco:'R$ 35,57',link:'https://meli.la/1S76qq6'},
-  {id:4677,loja:'MAGALU',titulo:'Robô Aspirador Xiaomi H50 de R$ 3.999 por R$ 2.478',preco:'R$ 2.478,25',link:'https://meli.la/18fFvav'},
-  {id:4678,loja:'MAGALU',titulo:'Samsung Galaxy A36 5G 128GB de R$ 2.212 por R$ 1.299',preco:'R$ 1.299,00',link:'https://meli.la/1eTKkda'},
-  {id:4679,loja:'MAGALU',titulo:'Kit Principia Skincare 3 Séruns Vitamina C + Retinol',preco:'R$ 128,00',link:'https://meli.la/2tW2TYH'},
-  {id:4680,loja:'MAGALU',titulo:'Fone Bluetooth 5.4 TWS de R$ 78 por R$ 49,70',preco:'R$ 49,70',link:'https://meli.la/1gFtEV8'},
-  {id:4681,loja:'MAGALU',titulo:'Panela de Pressão Elétrica Electrolux 5L 1000W Inox',preco:'R$ 404,10',link:'https://meli.la/1vtPRJh'},
-  {id:4682,loja:'MAGALU',titulo:'Monitor Gamer 27 AOC 27B30H3 Full HD IPS 120Hz 1ms',preco:'R$ 575,46',link:'https://meli.la/1bcSuL4'},
- ];
+    todos=[
+        {id:4675,loja:'MAGALU',titulo:'Guarda-roupa Casal com Espelho 6 Portas 2 Gavetas Salléto de R$ 776 por R$ 430 com cupom',preco:'R$ 430,00',link:'https://www.magazinevoce.com.br/magazinehdmicroloja/produto-exemplo',imagem:'https://via.placeholder.com/300x200/141C2E/F59E0B?text=MAGALU'},
+        {id:4676,loja:'SHOPEE',titulo:'Mouse USB HP 150 ergonômico R$ 69 por R$ 35,57',preco:'R$ 35,57',link:'https://collshp.com/lojinhashopofertas/i.332159234.51752402513',imagem:'https://via.placeholder.com/300x200/141C2E/F97316?text=SHOPEE'},
+        {id:4677,loja:'ML',titulo:'Robô Aspirador Xiaomi H50 de R$ 3.999 por R$ 2.478',preco:'R$ 2.478,25',link:'https://meli.la/1T6tAuJ',imagem:'https://via.placeholder.com/300x200/141C2E/3B82F6?text=MERCADO+LIVRE'},
+        {id:4678,loja:'AMAZON',titulo:'Samsung Galaxy A36 5G 128GB de R$ 2.212 por R$ 1.299',preco:'R$ 1.299,00',link:'https://www.amazon.com.br/dp/B08N5WRWNW?tag=coloposte-20',imagem:'https://via.placeholder.com/300x200/141C2E/FACC15?text=AMAZON'},
+        {id:4679,loja:'MAGALU',titulo:'Kit Principia Skincare 3 Séruns Vitamina C + Retinol',preco:'R$ 128,00',link:'https://www.magazinevoce.com.br/magazinehdmicroloja',imagem:null},
+        {id:4680,loja:'SHOPEE',titulo:'Fone Bluetooth 5.4 TWS de R$ 78 por R$ 49,70',preco:'R$ 49,70',link:'https://collshp.com/lojinhashopofertas',imagem:null},
+        {id:4681,loja:'ML',titulo:'Panela de Pressão Elétrica Electrolux 5L 1000W Inox',preco:'R$ 404,10',link:'https://meli.la/1T6tAuJ',imagem:null},
+        {id:4682,loja:'MAGALU',titulo:'Monitor Gamer 27 AOC 27B30H3 Full HD IPS 120Hz 1ms',preco:'R$ 575,46',link:'https://www.magazinevoce.com.br/magazinehdmicroloja',imagem:null},
+    ];
 }
+
 function render(){
- const ini=pagina*porPagina;const lote=todos.slice(ini,ini+porPagina);
- document.getElementById('quadro').innerHTML=lote.map((a,i)=>`
-  <div class="card">
-   <div class="card-top"><span class="card-badge">${a.loja||'MAGALU'}</span><span class="card-id">#${a.id}</span></div>
-   <div class="card-img ${i<2?'card-img-new':''}"></div>
-   <div class="card-titulo">${a.titulo}</div>
-   <div class="card-preco">${a.preco||'Ver preço'}</div>
-   <div class="card-link">${a.link}</div>
-   <a class="card-btn" href="${a.link}" target="_blank">PEGAR NO ZAP 🐞</a>
-  </div>
- `).join('');
- document.getElementById('pagInfo').innerText=`${pagina+1} / ${Math.ceil(todos.length/porPagina)} • ${todos.length} OFERTAS`;
- document.getElementById('qtd').innerText=`${todos.length} ofertas`;
+    const ini=pagina*porPagina;
+    const lote=todos.slice(ini,ini+porPagina);
+    
+    document.getElementById('quadro').innerHTML=lote.map((a,i)=>`
+        <div class="card">
+            <div class="card-top">
+                <span class="card-badge">${a.loja||'LOJA'}</span>
+                <span class="card-id">#${a.id}</span>
+            </div>
+            <div class="card-img ${i<2?'card-img-new':''}">
+                ${a.imagem ? `<img src="${a.imagem}" alt="${a.titulo}" onerror="this.style.display='none'">` : ''}
+            </div>
+            <div class="card-titulo">${a.titulo}</div>
+            <div class="card-preco">${a.preco||'Ver preço'}</div>
+            <div class="card-link">${a.link}</div>
+            <a class="card-btn" href="${a.link}" target="_blank">PEGAR NO ZAP 🐞</a>
+        </div>
+    `).join('');
+    
+    document.getElementById('pagInfo').innerText=`${pagina+1} / ${Math.ceil(todos.length/porPagina)} • ${todos.length} OFERTAS`;
+    document.getElementById('qtd').innerText=`${todos.length} ofertas`;
 }
+
 function mudar(dir){
- const tot=Math.ceil(todos.length/porPagina);
- if(dir===0){pagina=0;render();seg=480;return;}
- pagina=(pagina+dir+tot)%tot;render();seg=480;
+    const tot=Math.ceil(todos.length/porPagina);
+    if(dir===0){pagina=0;render();seg=480;return;}
+    pagina=(pagina+dir+tot)%tot;
+    render();
+    seg=480;
 }
+
 let seg=480;
 setInterval(()=>{
- seg--;if(seg<=0){mudar(1);seg=480;}
- document.getElementById('timer').innerText=`${String(Math.floor(seg/60)).padStart(2,'0')}:${String(seg%60).padStart(2,'0')}`;
+    seg--;
+    if(seg<=0){mudar(1);seg=480;}
+    document.getElementById('timer').innerText=`${String(Math.floor(seg/60)).padStart(2,'0')}:${String(seg%60).padStart(2,'0')}`;
 },1000);
+
 carregar();
 </script>
 </body>
