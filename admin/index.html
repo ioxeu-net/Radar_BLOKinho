@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katerina - Painel Administrativo</title>
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+
+  <!-- TELA DE LOGIN -->
+  <div class="login-box" id="caixa-autenticacao">
+    <h2>🔒 ACESSO RESTRITO</h2>
+    <p style="font-size:12px; color:#71717a; margin-bottom:15px;">Digite o PIN de segurança</p>
+    <input type="password" id="txt-senha" class="pin-input" maxlength="4" placeholder="••••" inputmode="numeric">
+    <button class="btn-login" onclick="validarAcessoAdmin()">ENTRAR</button>
+  </div>
+
+  <!-- PAINEL KATERINA -->
+  <div id="painel-privado" style="display:none;">
+    <header style="text-align:center; margin-bottom:20px;">
+      <span class="status-badge">● SISTEMA ATIVO</span>
+      <h1>PAINEL KATERINA</h1>
+      <p style="font-size:11px; color:#71717a;">Humano Sintético Postador v2.0</p>
+    </header>
+
+    <!-- ABAS -->
+    <nav class="tabs-nav">
+      <button class="tab-btn active" onclick="mudarAba('katerina')">🤖 POSTADOR</button>
+      <button class="tab-btn" onclick="mudarAba('retro')">📻 RETRÔ</button>
+      <button class="tab-btn" onclick="mudarAba('radar')">📡 RADAR D1</button>
+    </nav>
+
+    <!-- ABA 1: KATERINA (HUMANO SINTÉTICO) -->
+    <div id="content-katerina" class="tab-content active">
+      <div class="card-admin">
+        <h3>⚙️ FILTROS DO LOTE</h3>
+        <select id="filtro-nicho" class="input-field">
+          <option value="todos">Todos os Nichos</option>
+          <option value="roupas">👗 Roupas & Moda</option>
+          <option value="sapatos">👟 Sapatos</option>
+          <option value="eletronicos">📱 Eletrônicos</option>
+          <option value="casa">🏠 Casa & Decoração</option>
+        </select>
+        
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <input type="number" id="filtro-min" class="input-field" placeholder="Preço Mín R$" style="flex:1;">
+          <input type="number" id="filtro-max" class="input-field" placeholder="Preço Máx R$" style="flex:1;">
+        </div>
+
+        <button class="btn-action" onclick="gerarLoteKaterina()" style="margin-top:12px; background:#F97316;">
+          🚀 GERAR 15 LEGENDAS PRONTAS
+        </button>
+      </div>
+
+      <div id="area-legendas" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- ABA 2: MUNDO RETRÔ -->
+    <div id="content-retro" class="tab-content">
+      <div class="card-admin">
+        <h3>📻 ESTÚDIO VINTAGE</h3>
+        <div class="moldura-retro">
+          <span class="retro-badge">OFERTA IMPERDÍVEL</span>
+          <h2 id="retro-titulo">NOME DO PRODUTO</h2>
+          <div class="retro-divisor"></div>
+          <p id="retro-copy">"Traga distinção e modernidade ao seu lar com esta utilidade indispensável!"</p>
+          <div id="retro-preco" style="font-weight:bold; color:#c2410c; margin-top:8px;">Consulte nossa banca</div>
+        </div>
+        <input type="text" id="retro-input-nome" class="input-field" placeholder="Nome do produto..." style="margin-top:12px;">
+        <input type="text" id="retro-input-preco" class="input-field" placeholder="Valor (Ex: De R$99 por R$69)">
+        <button class="btn-action" onclick="gerarRetro()" style="background:#ea580c; color:#fff; margin-top:8px;">⚡ CRIAR ANÚNCIO VINTAGE</button>
+      </div>
+    </div>
+
+    <!-- ABA 3: RADAR D1 -->
+    <div id="content-radar" class="tab-content">
+      <div class="card-admin">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3>📡 FILA DO BANCO D1</h3>
+          <button onclick="carregarRadar()" style="background:#1e293b; color:#60a5fa; border:1px solid #334155; padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer;">🔄 ATUALIZAR</button>
+        </div>
+        <div id="log-radar" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+          <div style="text-align:center; color:#71717a; padding:20px; font-size:12px;">Clique em Atualizar para ler o banco...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="admin-script.js"></script>
+</body>
+</html>
