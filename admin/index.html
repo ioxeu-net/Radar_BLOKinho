@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Katerina - Painel Administrativo</title>
   
-  <!-- CSS EMBUTIDO PARA GARANTIR FUNCIONAMENTO -->
+  <!-- CSS EMBUTIDO PARA GARANTIR FUNCIONAMENTO IMEDIATO -->
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -31,114 +31,74 @@
     }
     .login-box h2 { color: #4ade80; font-size: 20px; margin-bottom: 8px; }
     .pin-input {
-      width: 100%;
-      padding: 16px;
-      background: #09090b;
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      color: #fff;
-      text-align: center;
-      font-size: 24px;
-      letter-spacing: 8px;
-      outline: none;
-      margin: 20px 0;
+      width: 100%; padding: 16px; background: #09090b;
+      border: 2px solid rgba(255,255,255,0.1); border-radius: 10px;
+      color: #fff; text-align: center; font-size: 24px;
+      letter-spacing: 8px; outline: none; margin: 20px 0;
     }
     .pin-input:focus { border-color: #4ade80; }
     .btn-login {
-      width: 100%;
-      background: #4ade80;
-      color: #09090b;
-      border: none;
-      padding: 14px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      width: 100%; background: #4ade80; color: #09090b;
+      border: none; padding: 14px; border-radius: 10px;
+      font-weight: 800; font-size: 14px; cursor: pointer;
+      text-transform: uppercase; letter-spacing: 1px;
     }
     /* PAINEL */
     #painel-privado { width: 100%; max-width: 500px; }
     .status-badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #eab308;
-      background: rgba(234,179,8,0.1);
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 10px;
+      display: inline-block; font-size: 10px; font-weight: 800;
+      letter-spacing: 2px; color: #eab308;
+      background: rgba(234,179,8,0.1); padding: 4px 12px;
+      border-radius: 20px; margin-bottom: 10px;
     }
     #painel-privado h1 { font-size: 22px; font-weight: 900; color: #4ade80; }
     /* ABAS */
     .tabs-nav { display: flex; gap: 6px; margin: 20px 0; }
     .tab-btn {
-      flex: 1;
-      background: #141417;
-      color: #71717a;
-      border: 1px solid rgba(255,255,255,0.05);
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 12px;
-      transition: all 0.2s;
+      flex: 1; background: #141417; color: #71717a;
+      border: 1px solid rgba(255,255,255,0.05); padding: 12px;
+      border-radius: 10px; cursor: pointer; font-weight: 700;
+      font-size: 12px; transition: all 0.2s;
     }
     .tab-btn.active { background: #27272a; color: #f4f4f5; border-color: #4b5563; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
     /* CARDS */
     .card-admin {
-      background: #141417;
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 12px;
+      background: #141417; border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px; padding: 20px; margin-bottom: 12px;
     }
     .input-field {
-      width: 100%;
-      padding: 12px;
-      background: #09090b;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
-      color: #f4f4f5;
-      font-size: 13px;
-      outline: none;
-      margin-bottom: 8px;
+      width: 100%; padding: 12px; background: #09090b;
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: #f4f4f5; font-size: 13px; outline: none; margin-bottom: 8px;
     }
     .btn-action {
-      width: 100%;
-      background: #eab308;
-      color: #09090b;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 12px;
-      cursor: pointer;
+      width: 100%; background: #eab308; color: #09090b;
+      border: none; padding: 12px; border-radius: 8px;
+      font-weight: 800; font-size: 12px; cursor: pointer;
       text-transform: uppercase;
     }
     /* LEGENDAS */
     .legenda-card {
-      background: #09090b;
-      border: 1px solid rgba(249,115,22,0.2);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 10px;
+      background: #09090b; border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 10px; padding: 14px; margin-bottom: 10px;
     }
     .legenda-card textarea {
-      width: 100%; height: 130px;
-      background: #141417; color: #f4f4f5;
-      border: none; padding: 10px;
-      border-radius: 6px; font-size: 12px;
-      resize: none; font-family: monospace;
-      margin: 8px 0;
+      width: 100%; height: 130px; background: #141417;
+      color: #f4f4f5; border: none; padding: 10px;
+      border-radius: 6px; font-size: 12px; resize: none;
+      font-family: monospace; margin: 8px 0;
     }
     .btn-copiar {
       width: 100%; background: #25D366; color: #fff;
       border: none; padding: 10px; border-radius: 6px;
       font-weight: 800; font-size: 11px; cursor: pointer;
+    }
+    .btn-salvar {
+      width: 100%; background: #3B82F6; color: #fff;
+      border: none; padding: 10px; border-radius: 6px;
+      font-weight: 800; font-size: 11px; cursor: pointer; margin-top: 6px;
     }
   </style>
 </head>
@@ -198,13 +158,16 @@
 
   <!-- SCRIPT DO PAINEL -->
   <script>
+    // URL DO WORKER (BACKEND SEPARADO)
+    const WORKER_URL = "https://radar.hdmicro.workers.dev";
+
     // VALIDAÇÃO SIMPLES (PIN 0660)
     function validarAcessoAdmin() {
       const entrada = document.getElementById('txt-senha').value;
       if (entrada === "0660") {
         document.getElementById('caixa-autenticacao').style.display = 'none';
         document.getElementById('painel-privado').style.display = 'block';
-        carregarRadar(); // Carrega dados ao entrar
+        carregarRadar();
       } else {
         alert("❌ PIN Incorreto! Tente 0660");
         document.getElementById('txt-senha').value = '';
@@ -223,10 +186,11 @@
       const area = document.getElementById('area-legendas');
       const nicho = document.getElementById('filtro-nicho').value;
       
-      area.innerHTML = '<div style="color:#F97316; text-align:center; padding:20px;">🤖 Buscando no D1...</div>';
+      area.innerHTML = '<div style="color:#F97316; text-align:center; padding:20px;">🤖 Buscando no Worker...</div>';
       
       try {
-        const res = await fetch('/api/ofertas');
+        // BUSCA AGORA VEM DO WORKER EXTERNO
+        const res = await fetch(`${WORKER_URL}/api/ofertas`);
         let dados = await res.json();
         
         // Filtra por nicho se necessário
@@ -251,26 +215,57 @@
             <div style="font-size:11px; color:#F97316; font-weight:800;">OFERTA #${i+1} • ${oferta.loja}</div>
             <textarea readonly>${legenda}</textarea>
             <button class="btn-copiar" onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerText='✅ COPIADO!'; setTimeout(()=>this.innerText='📋 COPIAR LEGENDA',2000)">📋 COPIAR LEGENDA</button>
+            <button class="btn-salvar" onclick="salvarOfertaNoBanco('${oferta.titulo.replace(/'/g, "\\'")}', '${oferta.link}', '${oferta.loja}')">💾 SALVAR NO SITE</button>
           `;
           area.appendChild(card);
         });
       } catch(e) {
-        area.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Erro ao conectar com D1.</div>';
+        area.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Erro ao conectar com Worker.</div>';
       }
     }
 
-    // RADAR - LER D1
+    // FUNÇÃO PARA SALVAR OFERTA MANUALMENTE NO BANCO VIA WORKER
+    async function salvarOfertaNoBanco(titulo, link, loja) {
+        try {
+            const response = await fetch(`${WORKER_URL}/api/achadinhos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    plataforma: loja.toLowerCase().includes('shopee') ? 'shopee' : 
+                               loja.toLowerCase().includes('mercado') ? 'mercado_livre' : 
+                               loja.toLowerCase().includes('magalu') ? 'magazine_luiza' : 'amazon',
+                    url_original: link,
+                    texto_bruto: titulo,
+                    imagem_url: null
+                })
+            });
+            
+            if (response.ok) {
+                alert("✅ Oferta salva no banco! Ela já aparecerá no site.");
+                carregarRadar();
+            } else {
+                alert("❌ Erro ao salvar no banco.");
+            }
+        } catch (e) {
+            alert("❌ Falha na conexão com o Worker.");
+        }
+    }
+
+    // RADAR - LER D1 VIA WORKER
     async function carregarRadar() {
       const log = document.getElementById('log-radar');
-      log.innerHTML = '<div style="color:#60a5fa; text-align:center; padding:10px;">Lendo D1...</div>';
+      log.innerHTML = '<div style="color:#60a5fa; text-align:center; padding:10px;">Lendo Worker...</div>';
       
       try {
-        // Tenta ler da API de ofertas (que une as tabelas)
-        const res = await fetch('/api/ofertas');
+        // BUSCA AGORA VEM DO WORKER EXTERNO
+        const res = await fetch(`${WORKER_URL}/api/ofertas?t=` + Date.now());
+        
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
         const dados = await res.json();
         
         if (!dados || dados.length === 0) {
-          log.innerHTML = '<div style="color:#71717a; text-align:center; padding:20px;">Banco vazio ou sem conexão.</div>';
+          log.innerHTML = '<div style="color:#71717a; text-align:center; padding:20px;">✅ Banco conectado, mas sem ofertas ainda.</div>';
           return;
         }
         
@@ -289,7 +284,8 @@
           log.appendChild(item);
         });
       } catch(e) {
-        log.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Erro ao ler D1.</div>';
+        console.error("Erro detalhado:", e);
+        log.innerHTML = `<div style="color:#ef4444; text-align:center; padding:20px;">❌ Falha na conexão com o Worker.<br><small>Verifique se o Worker está ativo.</small></div>`;
       }
     }
   </script>
