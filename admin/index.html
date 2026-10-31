@@ -4,7 +4,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Katerina - Painel Administrativo</title>
-  <link rel="stylesheet" href="admin-style.css">
+  
+  <!-- CSS EMBUTIDO PARA GARANTIR FUNCIONAMENTO -->
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background-color: #09090b;
+      color: #f4f4f5;
+      font-family: system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .login-box {
+      background: #141417;
+      padding: 40px 30px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+      margin-top: 15vh;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+    .login-box h2 { color: #4ade80; font-size: 20px; margin-bottom: 8px; }
+    .pin-input {
+      width: 100%;
+      padding: 16px;
+      background: #09090b;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      text-align: center;
+      font-size: 24px;
+      letter-spacing: 8px;
+      outline: none;
+      margin: 20px 0;
+    }
+    .pin-input:focus { border-color: #4ade80; }
+    .btn-login {
+      width: 100%;
+      background: #4ade80;
+      color: #09090b;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    /* PAINEL */
+    #painel-privado { width: 100%; max-width: 500px; }
+    .status-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #eab308;
+      background: rgba(234,179,8,0.1);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    #painel-privado h1 { font-size: 22px; font-weight: 900; color: #4ade80; }
+    /* ABAS */
+    .tabs-nav { display: flex; gap: 6px; margin: 20px 0; }
+    .tab-btn {
+      flex: 1;
+      background: #141417;
+      color: #71717a;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: #27272a; color: #f4f4f5; border-color: #4b5563; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    /* CARDS */
+    .card-admin {
+      background: #141417;
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      background: #09090b;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #f4f4f5;
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 8px;
+    }
+    .btn-action {
+      width: 100%;
+      background: #eab308;
+      color: #09090b;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    /* LEGENDAS */
+    .legenda-card {
+      background: #09090b;
+      border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .legenda-card textarea {
+      width: 100%; height: 130px;
+      background: #141417; color: #f4f4f5;
+      border: none; padding: 10px;
+      border-radius: 6px; font-size: 12px;
+      resize: none; font-family: monospace;
+      margin: 8px 0;
+    }
+    .btn-copiar {
+      width: 100%; background: #25D366; color: #fff;
+      border: none; padding: 10px; border-radius: 6px;
+      font-weight: 800; font-size: 11px; cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
@@ -16,7 +152,7 @@
     <button class="btn-login" onclick="validarAcessoAdmin()">ENTRAR</button>
   </div>
 
-  <!-- PAINEL KATERINA -->
+  <!-- PAINEL KATERINA (OCULTO INICIALMENTE) -->
   <div id="painel-privado" style="display:none;">
     <header style="text-align:center; margin-bottom:20px;">
       <span class="status-badge">● SISTEMA ATIVO</span>
@@ -24,56 +160,29 @@
       <p style="font-size:11px; color:#71717a;">Humano Sintético Postador v2.0</p>
     </header>
 
-    <!-- ABAS -->
     <nav class="tabs-nav">
-      <button class="tab-btn active" onclick="mudarAba('katerina')">🤖 POSTADOR</button>
-      <button class="tab-btn" onclick="mudarAba('retro')">📻 RETRÔ</button>
-      <button class="tab-btn" onclick="mudarAba('radar')">📡 RADAR D1</button>
+      <button class="tab-btn active" onclick="mudarAba('katerina', this)">🤖 POSTADOR</button>
+      <button class="tab-btn" onclick="mudarAba('radar', this)">📡 RADAR D1</button>
     </nav>
 
-    <!-- ABA 1: KATERINA (HUMANO SINTÉTICO) -->
+    <!-- ABA KATERINA -->
     <div id="content-katerina" class="tab-content active">
       <div class="card-admin">
         <h3>⚙️ FILTROS DO LOTE</h3>
         <select id="filtro-nicho" class="input-field">
           <option value="todos">Todos os Nichos</option>
           <option value="roupas">👗 Roupas & Moda</option>
-          <option value="sapatos">👟 Sapatos</option>
           <option value="eletronicos">📱 Eletrônicos</option>
           <option value="casa">🏠 Casa & Decoração</option>
         </select>
-        
-        <div style="display:flex; gap:8px; margin-top:8px;">
-          <input type="number" id="filtro-min" class="input-field" placeholder="Preço Mín R$" style="flex:1;">
-          <input type="number" id="filtro-max" class="input-field" placeholder="Preço Máx R$" style="flex:1;">
-        </div>
-
         <button class="btn-action" onclick="gerarLoteKaterina()" style="margin-top:12px; background:#F97316;">
           🚀 GERAR 15 LEGENDAS PRONTAS
         </button>
       </div>
-
       <div id="area-legendas" style="margin-top:16px;"></div>
     </div>
 
-    <!-- ABA 2: MUNDO RETRÔ -->
-    <div id="content-retro" class="tab-content">
-      <div class="card-admin">
-        <h3>📻 ESTÚDIO VINTAGE</h3>
-        <div class="moldura-retro">
-          <span class="retro-badge">OFERTA IMPERDÍVEL</span>
-          <h2 id="retro-titulo">NOME DO PRODUTO</h2>
-          <div class="retro-divisor"></div>
-          <p id="retro-copy">"Traga distinção e modernidade ao seu lar com esta utilidade indispensável!"</p>
-          <div id="retro-preco" style="font-weight:bold; color:#c2410c; margin-top:8px;">Consulte nossa banca</div>
-        </div>
-        <input type="text" id="retro-input-nome" class="input-field" placeholder="Nome do produto..." style="margin-top:12px;">
-        <input type="text" id="retro-input-preco" class="input-field" placeholder="Valor (Ex: De R$99 por R$69)">
-        <button class="btn-action" onclick="gerarRetro()" style="background:#ea580c; color:#fff; margin-top:8px;">⚡ CRIAR ANÚNCIO VINTAGE</button>
-      </div>
-    </div>
-
-    <!-- ABA 3: RADAR D1 -->
+    <!-- ABA RADAR -->
     <div id="content-radar" class="tab-content">
       <div class="card-admin">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -81,13 +190,108 @@
           <button onclick="carregarRadar()" style="background:#1e293b; color:#60a5fa; border:1px solid #334155; padding:6px 12px; border-radius:6px; font-size:11px; cursor:pointer;">🔄 ATUALIZAR</button>
         </div>
         <div id="log-radar" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
-          <div style="text-align:center; color:#71717a; padding:20px; font-size:12px;">Clique em Atualizar para ler o banco...</div>
+          <div style="text-align:center; color:#71717a; padding:20px; font-size:12px;">Clique em Atualizar...</div>
         </div>
       </div>
     </div>
-
   </div>
 
-  <script src="admin-script.js"></script>
+  <!-- SCRIPT DO PAINEL -->
+  <script>
+    // VALIDAÇÃO SIMPLES (PIN 0660)
+    function validarAcessoAdmin() {
+      const entrada = document.getElementById('txt-senha').value;
+      if (entrada === "0660") {
+        document.getElementById('caixa-autenticacao').style.display = 'none';
+        document.getElementById('painel-privado').style.display = 'block';
+        carregarRadar(); // Carrega dados ao entrar
+      } else {
+        alert("❌ PIN Incorreto! Tente 0660");
+        document.getElementById('txt-senha').value = '';
+      }
+    }
+
+    function mudarAba(alvo, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`content-${alvo}`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // KATERINA - GERAR LEGENDAS
+    async function gerarLoteKaterina() {
+      const area = document.getElementById('area-legendas');
+      const nicho = document.getElementById('filtro-nicho').value;
+      
+      area.innerHTML = '<div style="color:#F97316; text-align:center; padding:20px;">🤖 Buscando no D1...</div>';
+      
+      try {
+        const res = await fetch('/api/ofertas');
+        let dados = await res.json();
+        
+        // Filtra por nicho se necessário
+        if(nicho !== 'todos') {
+          dados = dados.filter(d => d.titulo.toLowerCase().includes(nicho));
+        }
+        
+        const lote = dados.slice(0, 15);
+        
+        if(lote.length === 0) {
+          area.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Nenhuma oferta encontrada.</div>';
+          return;
+        }
+
+        area.innerHTML = '';
+        lote.forEach((oferta, i) => {
+          const legenda = `🐞 *${i+1}º ACHADINHO DA JUJU!* ✨\n\n🛍️ *${oferta.titulo}*\n💰 Apenas: ${oferta.preco}\n🏪 Loja: ${oferta.loja}\n\n👉 Pegue com desconto:\nhttps://radar-blokinho.pages.dev/\n\n_${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}_`;
+          
+          const card = document.createElement('div');
+          card.className = 'legenda-card';
+          card.innerHTML = `
+            <div style="font-size:11px; color:#F97316; font-weight:800;">OFERTA #${i+1} • ${oferta.loja}</div>
+            <textarea readonly>${legenda}</textarea>
+            <button class="btn-copiar" onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerText='✅ COPIADO!'; setTimeout(()=>this.innerText='📋 COPIAR LEGENDA',2000)">📋 COPIAR LEGENDA</button>
+          `;
+          area.appendChild(card);
+        });
+      } catch(e) {
+        area.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Erro ao conectar com D1.</div>';
+      }
+    }
+
+    // RADAR - LER D1
+    async function carregarRadar() {
+      const log = document.getElementById('log-radar');
+      log.innerHTML = '<div style="color:#60a5fa; text-align:center; padding:10px;">Lendo D1...</div>';
+      
+      try {
+        // Tenta ler da API de ofertas (que une as tabelas)
+        const res = await fetch('/api/ofertas');
+        const dados = await res.json();
+        
+        if (!dados || dados.length === 0) {
+          log.innerHTML = '<div style="color:#71717a; text-align:center; padding:20px;">Banco vazio ou sem conexão.</div>';
+          return;
+        }
+        
+        log.innerHTML = '';
+        dados.slice(0, 20).forEach(p => {
+          const item = document.createElement('div');
+          item.style.cssText = "background:#09090b; padding:12px; border-radius:8px; border-left:3px solid #10b981;";
+          item.innerHTML = `
+            <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:bold; color:${p.loja === 'MERCADO LIVRE' ? '#eab308' : '#10b981'};">
+              <span>${p.loja}</span>
+              <span style="color:#71717a">#${p.id}</span>
+            </div>
+            <div style="color:#f4f4f5; font-size:12px; margin-top:4px;">${p.titulo}</div>
+            <div style="color:#4ade80; font-weight:bold; margin-top:4px;">${p.preco}</div>
+          `;
+          log.appendChild(item);
+        });
+      } catch(e) {
+        log.innerHTML = '<div style="color:#ef4444; text-align:center; padding:20px;">Erro ao ler D1.</div>';
+      }
+    }
+  </script>
 </body>
 </html>
