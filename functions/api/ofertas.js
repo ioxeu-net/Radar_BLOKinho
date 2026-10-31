@@ -5,81 +5,88 @@ export async function onRequest(context) {
   };
 
   try {
-    // 🔒 CONFIGURAÇÃO DE SEGURANÇA DUPLA PARA ML
-    const ML_LINK_SEGURO = "https://lista.mercadolivre.com.br/_CustId_ML202408011903400660";
-    const ML_LINK_PRINCIPAL = "https://meli.la/1T6tAuJ";
-    
-    // Usaremos o link seguro como padrão para garantir comissão
+    // Configuração dos Links Oficiais
     const LOJAS_OFICIAIS = {
       shopee: "https://collshp.com/lojinhashopofertas?view=storefront",
-      mercado_livre: ML_LINK_SEGURO, 
+      mercado_livre: "https://lista.mercadolivre.com.br/_CustId_ML202408011903400660",
       magazine_luiza: "https://www.magazinevoce.com.br/magazinehdmicroloja",
       amazon_tag: "coloposte-20"
     };
 
-    // ✅ BUSCA UNIFICADA: Pega dados das duas tabelas (ML separada + Achadinhos gerais)
-    const stmt = context.env.DB.prepare(`
-      SELECT id, 'mercado_livre' as plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM mercado_livre
-      UNION ALL
-      SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM achadinhos
-      ORDER BY data_captura DESC LIMIT 60
-    `);
-    
-    const { results } = await stmt.all();
+    let allResults = [];
 
+    // 1. Busca na tabela ACHADINHOS
+    try {
+      const stmt1 = context.env.DB.prepare(
+        "SELECT id, plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM achadinhos ORDER BY data_captura DESC LIMIT 30"
+      );
+      const res1 = await stmt1.all();
+      if (res1.results) allResults = allResults.concat(res1.results);
+    } catch (e1) {
+      console.error("Erro ao ler achadinhos:", e1);
+    }
+
+    // 2. Busca na tabela MERCADO_LIVRE
+    try {
+      const stmt2 = context.env.DB.prepare(
+        "SELECT id, 'mercado_livre' as plataforma, url_original as link, texto_bruto as titulo, imagem_url, data_captura FROM mercado_livre ORDER BY data_captura DESC LIMIT 30"
+      );
+      const res2 = await stmt2.all();
+      if (res2.results) allResults = allResults.concat(res2.results);
+    } catch (e2) {
+      console.error("Erro ao ler mercado_livre:", e2);
+    }
+
+    // 3. Ordena tudo junto por data (mais recente primeiro)
+    allResults.sort((a, b) => new Date(b.data_captura) - new Date(a.data_captura));
+    
+    // Pega apenas os 50 mais recentes no total
+    const results = allResults.slice(0, 50);
+
+    // 4. Processa e formata as ofertas
     const ofertasFormatadas = results.map(item => {
-      let linkFinal = item.link;
-      let lojaNome = item.plataforma?.toUpperCase() || 'OFERTA';
+      let linkFinal = item.link || "";
+      let lojaNome = (item.plataforma || "OUTROS").toUpperCase();
       
-      // Lógica de injeção de loja oficial (Backend Seguro)
-      if (item.plataforma === 'shopee') {
-        const match = item.link.match(/i\.(\d+)\.(\d+)/);
-        if (match) {
-          linkFinal = `https://collshp.com/lojinhashopofertas/i.${match[1]}.${match[2]}`;
-        } else {
-          linkFinal = LOJAS_OFICIAIS.shopee;
-        }
+      // Lógica de Injeção de Links Segura
+      if (lojaNome.includes('SHOPEE')) {
+        const match = linkFinal.match(/i\.(\d+)\.(\d+)/);
+        linkFinal = match ? `https://collshp.com/lojinhashopofertas/i.${match[1]}.${match[2]}` : LOJAS_OFICIAIS.shopee;
         lojaNome = 'SHOPEE';
       } 
-      else if (item.plataforma === 'mercado_livre') {
-        // Força o uso do link seguro com seu CustId
+      else if (lojaNome.includes('MERCADO') || lojaNome.includes('ML')) {
         linkFinal = LOJAS_OFICIAIS.mercado_livre;
         lojaNome = 'MERCADO LIVRE';
       }
-      else if (item.plataforma === 'magazine_luiza') {
+      else if (lojaNome.includes('MAGALU') || lojaNome.includes('MAGAZINE')) {
         linkFinal = LOJAS_OFICIAIS.magazine_luiza;
         lojaNome = 'MAGALU';
       }
-      else if (item.plataforma === 'amazon') {
+      else if (lojaNome.includes('AMAZON')) {
         if (!linkFinal.includes('tag=')) {
           linkFinal += (linkFinal.includes('?') ? '&' : '?') + `tag=${LOJAS_OFICIAIS.amazon_tag}`;
         }
         lojaNome = 'AMAZON';
       }
 
-      // Limpeza básica do título
-      let tituloLimpo = item.titulo || "Oferta Imperdível";
-      if (tituloLimpo.length > 100) tituloLimpo = tituloLimpo.substring(0, 97) + '...';
-
       return {
         id: item.id,
         loja: lojaNome,
-        titulo: tituloLimpo,
+        titulo: (item.titulo || "Oferta Imperdível").substring(0, 100),
         link: linkFinal,
         imagem: item.imagem_url || null,
-        preco: "Ver oferta"
+        preco: "Ver oferta" // Placeholder pois o D1 não tem preço salvo ainda
       };
     });
 
-    return new Response(JSON.stringify(ofertasFormatadas), {
-      headers: corsHeaders
-    });
+    return new Response(JSON.stringify(ofertasFormatadas), { headers: corsHeaders });
 
   } catch (err) {
-    console.error("Erro ao buscar ofertas:", err);
-    return new Response(JSON.stringify({ error: "Erro interno no servidor" }), {
-      status: 500,
-      headers: corsHeaders
+    console.error("ERRO CRÍTICO NA API OFERTAS:", err);
+    // Retorna array vazio em vez de erro 500 para não travar o frontend
+    return new Response(JSON.stringify([]), { 
+      status: 200, 
+      headers: corsHeaders 
     });
   }
 }
